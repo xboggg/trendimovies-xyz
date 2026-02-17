@@ -10,7 +10,10 @@ import {
   ThisDayInHistory,
   DailyTrivia,
   HotDiscussions,
+  Newsletter,
+  WatchlistDisplay,
 } from "@/components/engagement";
+import { WebsiteJsonLd } from "@/components/seo";
 import {
   getTrendingMovies,
   getPopularMovies,
@@ -122,6 +125,13 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <WebsiteJsonLd
+        name="TrendiMovies"
+        url="https://trendimovies.xyz"
+        description="Discover trending movies, TV shows, reviews, and find where to watch your favorites."
+      />
+
       {/* Hero Section */}
       <Hero movies={trendingMovies.results} />
 
@@ -140,6 +150,9 @@ export default async function HomePage() {
             {activePoll && <DailyPoll poll={activePoll} />}
           </div>
         </div>
+
+        {/* User's Watchlist (client-side) */}
+        <WatchlistDisplay className="mb-10" maxItems={10} showEmpty={false} />
 
         {/* Ad Zone 1 */}
         <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl text-center">
@@ -166,14 +179,8 @@ export default async function HomePage() {
           <ThisDayInHistory events={todayHistory} />
         </div>
 
-        {/* Ad Zone 2 */}
-        <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl text-center">
-          <span className="text-zinc-600 text-sm">Advertisement</span>
-          <div className="h-24 flex items-center justify-center text-zinc-700">
-            {/* AdSense code will go here */}
-            Ad Space - 728x90
-          </div>
-        </div>
+        {/* Newsletter Inline */}
+        <Newsletter variant="inline" className="mb-10" />
 
         {/* Now Playing */}
         <MovieRow
@@ -226,6 +233,15 @@ export default async function HomePage() {
           </Section>
         )}
 
+        {/* Ad Zone 2 */}
+        <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl text-center">
+          <span className="text-zinc-600 text-sm">Advertisement</span>
+          <div className="h-24 flex items-center justify-center text-zinc-700">
+            {/* AdSense code will go here */}
+            Ad Space - 728x90
+          </div>
+        </div>
+
         {/* Hot Discussions */}
         <div className="mb-10">
           <HotDiscussions limit={5} />
@@ -271,6 +287,11 @@ export default async function HomePage() {
             ))}
           </ContentGrid>
         </Section>
+
+        {/* Newsletter Card at Bottom */}
+        <div className="mb-10 max-w-md mx-auto">
+          <Newsletter variant="card" />
+        </div>
       </div>
     </div>
   );

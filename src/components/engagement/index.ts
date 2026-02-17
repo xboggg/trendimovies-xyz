@@ -4,3 +4,6 @@ export { CountdownCard, ComingSoonRow } from "./CountdownCard";
 export { ThisDayInHistory } from "./ThisDayInHistory";
 export { DailyTrivia } from "./DailyTrivia";
 export { Comments, HotDiscussions } from "./Comments";
+export { Newsletter } from "./Newsletter";
+export { UserRating } from "./UserRating";
+export { WatchlistButton, WatchlistDisplay, useWatchlist } from "./Watchlist";

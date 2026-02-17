@@ -8,11 +8,10 @@ import {
   Calendar,
   Clock,
   Play,
-  Bookmark,
   ExternalLink,
   Tv,
 } from "lucide-react";
-import { getMovieDetails, getPopularMovies } from "@/services/tmdb";
+import { getMovieDetails } from "@/services/tmdb";
 import {
   getImageUrl,
   getBackdropUrl,
@@ -28,7 +27,9 @@ import { PersonCard, MovieCard } from "@/components/ui/card";
 import { Section, ScrollRow } from "@/components/ui/section";
 import { VideoPlayer } from "@/components/movies/VideoPlayer";
 import { WatchProviders } from "@/components/movies/WatchProviders";
-import { Comments } from "@/components/engagement";
+import { Comments, UserRating, WatchlistButton, Newsletter } from "@/components/engagement";
+import { MovieJsonLd, BreadcrumbJsonLd } from "@/components/seo";
+import { InArticleAd } from "@/components/ads";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -77,6 +78,16 @@ export default async function MovieDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <MovieJsonLd movie={movie} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://trendimovies.xyz" },
+          { name: "Movies", url: "https://trendimovies.xyz/movies" },
+          { name: movie.title, url: `https://trendimovies.xyz/movies/${id}` },
+        ]}
+      />
+
       {/* Backdrop */}
       <div className="relative h-[70vh] min-h-[500px]">
         <Image
@@ -105,6 +116,16 @@ export default async function MovieDetailPage({ params }: Props) {
                 priority
                 sizes="320px"
               />
+              {/* Watchlist button on poster */}
+              <div className="absolute top-3 right-3">
+                <WatchlistButton
+                  id={movie.id}
+                  type="movie"
+                  title={movie.title}
+                  posterPath={movie.poster_path}
+                  variant="icon"
+                />
+              </div>
             </div>
           </div>
 
@@ -220,99 +241,134 @@ export default async function MovieDetailPage({ params }: Props) {
                   </Button>
                 </VideoPlayer>
               )}
-              <Button variant="secondary" size="lg" className="gap-2">
-                <Bookmark className="w-5 h-5" />
-                Add to Watchlist
-              </Button>
+              <WatchlistButton
+                id={movie.id}
+                type="movie"
+                title={movie.title}
+                posterPath={movie.poster_path}
+                variant="button"
+              />
               <ShareButton title={movie.title} />
             </div>
           </div>
         </div>
 
-        {/* Watch Providers */}
-        {movie.watch_providers && (
-          <WatchProviders providers={movie.watch_providers} title={movie.title} />
-        )}
-
-        {/* Cast */}
-        {cast.length > 0 && (
-          <Section title="Cast" className="mt-12">
-            <ScrollRow>
-              {cast.map((person) => (
-                <div key={person.id} className="flex-shrink-0 w-28">
-                  <PersonCard
-                    id={person.id}
-                    name={person.name}
-                    profilePath={person.profile_path}
-                    character={person.character}
-                  />
-                </div>
-              ))}
-            </ScrollRow>
-          </Section>
-        )}
-
-        {/* Similar Movies */}
-        {similar.length > 0 && (
-          <Section title="Similar Movies" className="mt-8">
-            <ScrollRow>
-              {similar.map((m) => (
-                <div key={m.id} className="flex-shrink-0 w-[180px]">
-                  <MovieCard movie={m} />
-                </div>
-              ))}
-            </ScrollRow>
-          </Section>
-        )}
-
-        {/* Recommendations */}
-        {recommendations.length > 0 && (
-          <Section title="Recommended For You" className="mt-8">
-            <ScrollRow>
-              {recommendations.map((m) => (
-                <div key={m.id} className="flex-shrink-0 w-[180px]">
-                  <MovieCard movie={m} />
-                </div>
-              ))}
-            </ScrollRow>
-          </Section>
-        )}
-
-        {/* External Links */}
-        {movie.external_ids && (
-          <div className="mt-12 mb-8 flex flex-wrap gap-4">
-            {movie.external_ids.imdb_id && (
-              <a
-                href={`https://www.imdb.com/title/${movie.external_ids.imdb_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition-colors"
-              >
-                IMDb
-                <ExternalLink className="w-4 h-4" />
-              </a>
+        {/* Two Column Layout: Main Content + Sidebar */}
+        <div className="mt-12 flex flex-col lg:flex-row gap-8">
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Watch Providers */}
+            {movie.watch_providers && (
+              <WatchProviders providers={movie.watch_providers} title={movie.title} />
             )}
-            {movie.homepage && (
-              <a
-                href={movie.homepage}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
-              >
-                Official Website
-                <ExternalLink className="w-4 h-4" />
-              </a>
+
+            {/* Cast */}
+            {cast.length > 0 && (
+              <Section title="Cast" className="mt-8">
+                <ScrollRow>
+                  {cast.map((person) => (
+                    <div key={person.id} className="flex-shrink-0 w-28">
+                      <PersonCard
+                        id={person.id}
+                        name={person.name}
+                        profilePath={person.profile_path}
+                        character={person.character}
+                      />
+                    </div>
+                  ))}
+                </ScrollRow>
+              </Section>
             )}
+
+            {/* Ad placement */}
+            <InArticleAd className="mt-8" />
+
+            {/* Similar Movies */}
+            {similar.length > 0 && (
+              <Section title="Similar Movies" className="mt-8">
+                <ScrollRow>
+                  {similar.map((m) => (
+                    <div key={m.id} className="flex-shrink-0 w-[180px]">
+                      <MovieCard movie={m} />
+                    </div>
+                  ))}
+                </ScrollRow>
+              </Section>
+            )}
+
+            {/* Recommendations */}
+            {recommendations.length > 0 && (
+              <Section title="Recommended For You" className="mt-8">
+                <ScrollRow>
+                  {recommendations.map((m) => (
+                    <div key={m.id} className="flex-shrink-0 w-[180px]">
+                      <MovieCard movie={m} />
+                    </div>
+                  ))}
+                </ScrollRow>
+              </Section>
+            )}
+
+            {/* External Links */}
+            {movie.external_ids && (
+              <div className="mt-8 mb-8 flex flex-wrap gap-4">
+                {movie.external_ids.imdb_id && (
+                  <a
+                    href={`https://www.imdb.com/title/${movie.external_ids.imdb_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition-colors"
+                  >
+                    IMDb
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+                {movie.homepage && (
+                  <a
+                    href={movie.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+                  >
+                    Official Website
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* Comments Section */}
+            <div className="mt-8 mb-8">
+              <Comments
+                contentType="movie"
+                contentId={id}
+                contentTitle={movie.title}
+              />
+            </div>
           </div>
-        )}
 
-        {/* Comments Section */}
-        <div className="mt-12 mb-8">
-          <Comments
-            contentType="movie"
-            contentId={id}
-            contentTitle={movie.title}
-          />
+          {/* Sidebar */}
+          <div className="lg:w-80 space-y-6">
+            {/* User Rating */}
+            <UserRating
+              contentType="movie"
+              contentId={id}
+              contentTitle={movie.title}
+              tmdbRating={movie.vote_average}
+              tmdbVotes={movie.vote_count}
+            />
+
+            {/* Newsletter */}
+            <Newsletter variant="card" />
+
+            {/* Ad Space */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-center">
+              <span className="text-zinc-600 text-xs">Advertisement</span>
+              <div className="h-[250px] flex items-center justify-center text-zinc-700 mt-2">
+                Ad Space (300x250)
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
