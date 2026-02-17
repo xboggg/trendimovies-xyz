@@ -7,3 +7,4 @@ export { Comments, HotDiscussions } from "./Comments";
 export { Newsletter } from "./Newsletter";
 export { UserRating } from "./UserRating";
 export { WatchlistButton, WatchlistDisplay, useWatchlist } from "./Watchlist";
+export { NewsSection } from "./NewsSection";

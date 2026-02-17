@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Swords, Trophy, Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Swords, Trophy, Zap, Flame, Users } from "lucide-react";
 import { getImageUrl } from "@/lib/utils";
 
 interface Battle {
@@ -29,7 +29,6 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
   const [isLoading, setIsLoading] = useState(!initialBattle);
   const [isVoting, setIsVoting] = useState(false);
 
-  // Check if user has already voted
   useEffect(() => {
     if (battle) {
       const votedBattles = JSON.parse(localStorage.getItem("votedBattles") || "{}");
@@ -40,11 +39,8 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
     }
   }, [battle]);
 
-  // Fetch battle if not provided
   useEffect(() => {
-    if (!initialBattle) {
-      fetchActiveBattle();
-    }
+    if (!initialBattle) fetchActiveBattle();
   }, [initialBattle]);
 
   async function fetchActiveBattle() {
@@ -73,10 +69,7 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
       const res = await fetch("/api/engagement/battle/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          battleId: battle.id,
-          movieId,
-        }),
+        body: JSON.stringify({ battleId: battle.id, movieId }),
       });
 
       if (res.ok) {
@@ -84,7 +77,6 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
         setBattle(updatedBattle);
         setHasVoted(true);
 
-        // Save to localStorage
         const votedBattles = JSON.parse(localStorage.getItem("votedBattles") || "{}");
         votedBattles[battle.id] = side;
         localStorage.setItem("votedBattles", JSON.stringify(votedBattles));
@@ -99,24 +91,20 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+      <div className="max-w-2xl mx-auto bg-zinc-900/50 rounded-2xl p-6 border border-zinc-800/50">
         <div className="animate-pulse">
-          <div className="h-6 bg-zinc-800 rounded w-1/2 mx-auto mb-6"></div>
-          <div className="flex gap-4">
-            <div className="flex-1 aspect-[2/3] bg-zinc-800 rounded-xl"></div>
-            <div className="w-16 flex items-center justify-center">
-              <div className="w-12 h-12 bg-zinc-800 rounded-full"></div>
-            </div>
-            <div className="flex-1 aspect-[2/3] bg-zinc-800 rounded-xl"></div>
+          <div className="h-6 bg-zinc-800 rounded w-1/3 mx-auto mb-6"></div>
+          <div className="flex gap-4 justify-center">
+            <div className="w-32 aspect-[2/3] bg-zinc-800 rounded-xl"></div>
+            <div className="w-12 h-12 bg-zinc-800 rounded-full self-center"></div>
+            <div className="w-32 aspect-[2/3] bg-zinc-800 rounded-xl"></div>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!battle) {
-    return null;
-  }
+  if (!battle) return null;
 
   const totalVotes = battle.movie_a_votes + battle.movie_b_votes;
   const percentageA = totalVotes > 0 ? Math.round((battle.movie_a_votes / totalVotes) * 100) : 50;
@@ -124,154 +112,213 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
   const winner = percentageA > percentageB ? "a" : percentageB > percentageA ? "b" : null;
 
   return (
-    <div className="bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 rounded-xl p-6 border border-zinc-800 overflow-hidden relative">
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-red-500 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative">
-        {/* Header */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <Swords className="w-5 h-5 text-red-500" />
-          <span className="text-sm font-bold text-red-500 uppercase tracking-wider">
-            Movie Battle
-          </span>
-          <Swords className="w-5 h-5 text-red-500 scale-x-[-1]" />
+    <div className="max-w-2xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative bg-gradient-to-br from-zinc-900 via-zinc-900/95 to-zinc-900 rounded-2xl p-6 border border-zinc-800/50 overflow-hidden"
+      >
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-1/4 w-32 h-32 bg-red-500 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-orange-500 rounded-full blur-3xl" />
         </div>
 
-        <h3 className="text-center text-lg font-semibold text-white mb-6">
-          Which movie do you prefer?
-        </h3>
-
-        {/* Battle Cards */}
-        <div className="flex items-stretch gap-4">
-          {/* Movie A */}
-          <motion.button
-            onClick={() => handleVote("a")}
-            disabled={hasVoted || isVoting}
-            whileHover={!hasVoted ? { scale: 1.02 } : {}}
-            whileTap={!hasVoted ? { scale: 0.98 } : {}}
-            className={`flex-1 relative group ${!hasVoted ? "cursor-pointer" : ""}`}
-          >
-            <div
-              className={`relative aspect-[2/3] rounded-xl overflow-hidden border-2 transition-all ${
-                hasVoted && votedFor === "a"
-                  ? "border-red-500 shadow-lg shadow-red-500/20"
-                  : hasVoted
-                  ? "border-zinc-700 opacity-60"
-                  : "border-zinc-700 group-hover:border-red-500/50"
-              }`}
+        <div className="relative">
+          {/* Header */}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <motion.div
+              animate={{ rotate: [0, -15, 15, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
-              <Image
-                src={getImageUrl(battle.movie_a_poster, "w342")}
-                alt={battle.movie_a_title}
-                fill
-                className="object-cover"
-                sizes="200px"
-              />
-              {/* Hover overlay */}
-              {!hasVoted && (
-                <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/20 transition-colors flex items-center justify-center">
-                  <Zap className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              )}
-              {/* Winner badge */}
-              {hasVoted && winner === "a" && (
-                <div className="absolute top-2 right-2 bg-yellow-500 text-black p-1.5 rounded-full">
-                  <Trophy className="w-4 h-4" />
-                </div>
-              )}
-            </div>
-            <h4 className="mt-3 text-sm font-medium text-white text-center line-clamp-2">
-              {battle.movie_a_title}
-            </h4>
-            {hasVoted && (
-              <div className="mt-2 text-center">
-                <span
-                  className={`text-2xl font-bold ${
-                    votedFor === "a" ? "text-red-500" : "text-zinc-400"
-                  }`}
-                >
-                  {percentageA}%
-                </span>
-              </div>
-            )}
-          </motion.button>
-
-          {/* VS Badge */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg">
-              <span className="text-white font-black text-lg">VS</span>
-            </div>
+              <Swords className="w-5 h-5 text-red-500" />
+            </motion.div>
+            <span className="text-sm font-bold text-red-500 uppercase tracking-wider">
+              Movie Battle
+            </span>
+            <motion.div
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Swords className="w-5 h-5 text-red-500 scale-x-[-1]" />
+            </motion.div>
           </div>
 
-          {/* Movie B */}
-          <motion.button
-            onClick={() => handleVote("b")}
-            disabled={hasVoted || isVoting}
-            whileHover={!hasVoted ? { scale: 1.02 } : {}}
-            whileTap={!hasVoted ? { scale: 0.98 } : {}}
-            className={`flex-1 relative group ${!hasVoted ? "cursor-pointer" : ""}`}
+          <h3 className="text-center text-lg font-semibold text-white mb-6">
+            Which movie do you prefer?
+          </h3>
+
+          {/* Battle Cards - Constrained Width */}
+          <div className="flex items-center justify-center gap-4 md:gap-6">
+            {/* Movie A */}
+            <BattleCard
+              title={battle.movie_a_title}
+              poster={battle.movie_a_poster}
+              percentage={percentageA}
+              isVoted={votedFor === "a"}
+              isWinner={hasVoted && winner === "a"}
+              hasVoted={hasVoted}
+              isVoting={isVoting}
+              onVote={() => handleVote("a")}
+            />
+
+            {/* VS Badge */}
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex-shrink-0"
+            >
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-red-500/50">
+                <span className="text-white font-black text-sm">VS</span>
+              </div>
+            </motion.div>
+
+            {/* Movie B */}
+            <BattleCard
+              title={battle.movie_b_title}
+              poster={battle.movie_b_poster}
+              percentage={percentageB}
+              isVoted={votedFor === "b"}
+              isWinner={hasVoted && winner === "b"}
+              hasVoted={hasVoted}
+              isVoting={isVoting}
+              onVote={() => handleVote("b")}
+            />
+          </div>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            {hasVoted ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-center gap-2 text-sm text-zinc-400"
+              >
+                <Users className="w-4 h-4" />
+                <span>{totalVotes.toLocaleString()} votes</span>
+                <span className="text-zinc-600">|</span>
+                <span className="text-green-400">Thanks!</span>
+              </motion.div>
+            ) : (
+              <p className="text-sm text-zinc-500">Click on a movie to cast your vote</p>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+interface BattleCardProps {
+  title: string;
+  poster: string;
+  percentage: number;
+  isVoted: boolean;
+  isWinner: boolean;
+  hasVoted: boolean;
+  isVoting: boolean;
+  onVote: () => void;
+}
+
+function BattleCard({
+  title,
+  poster,
+  percentage,
+  isVoted,
+  isWinner,
+  hasVoted,
+  isVoting,
+  onVote,
+}: BattleCardProps) {
+  return (
+    <motion.button
+      onClick={onVote}
+      disabled={hasVoted || isVoting}
+      whileHover={!hasVoted ? { scale: 1.05, y: -5 } : {}}
+      whileTap={!hasVoted ? { scale: 0.95 } : {}}
+      className={`relative group ${!hasVoted ? "cursor-pointer" : ""}`}
+    >
+      <div
+        className={`relative w-28 md:w-36 aspect-[2/3] rounded-xl overflow-hidden border-2 transition-all shadow-lg ${
+          isVoted
+            ? "border-red-500 shadow-red-500/30"
+            : hasVoted
+            ? "border-zinc-700 opacity-60"
+            : "border-zinc-700 group-hover:border-red-500/50 group-hover:shadow-red-500/20"
+        }`}
+      >
+        <Image
+          src={getImageUrl(poster, "w342")}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="144px"
+        />
+
+        {/* Hover effect */}
+        {!hasVoted && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+            className="absolute inset-0 bg-red-500/20 flex items-center justify-center"
           >
-            <div
-              className={`relative aspect-[2/3] rounded-xl overflow-hidden border-2 transition-all ${
-                hasVoted && votedFor === "b"
-                  ? "border-red-500 shadow-lg shadow-red-500/20"
-                  : hasVoted
-                  ? "border-zinc-700 opacity-60"
-                  : "border-zinc-700 group-hover:border-red-500/50"
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              <Zap className="w-8 h-8 text-white drop-shadow-lg" />
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Winner badge */}
+        <AnimatePresence>
+          {isWinner && (
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              className="absolute top-2 right-2 bg-yellow-500 text-black p-1.5 rounded-full shadow-lg"
+            >
+              <Trophy className="w-3 h-3" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Vote indicator */}
+        {isVoted && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute top-2 left-2 bg-red-600 p-1 rounded-full"
+          >
+            <Flame className="w-3 h-3 text-white" />
+          </motion.div>
+        )}
+      </div>
+
+      {/* Title */}
+      <h4 className="mt-2 text-xs md:text-sm font-medium text-white text-center line-clamp-2 max-w-[120px] md:max-w-[144px]">
+        {title}
+      </h4>
+
+      {/* Percentage */}
+      <AnimatePresence>
+        {hasVoted && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-1 text-center"
+          >
+            <span
+              className={`text-xl md:text-2xl font-black ${
+                isVoted ? "text-red-500" : "text-zinc-400"
               }`}
             >
-              <Image
-                src={getImageUrl(battle.movie_b_poster, "w342")}
-                alt={battle.movie_b_title}
-                fill
-                className="object-cover"
-                sizes="200px"
-              />
-              {/* Hover overlay */}
-              {!hasVoted && (
-                <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/20 transition-colors flex items-center justify-center">
-                  <Zap className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              )}
-              {/* Winner badge */}
-              {hasVoted && winner === "b" && (
-                <div className="absolute top-2 right-2 bg-yellow-500 text-black p-1.5 rounded-full">
-                  <Trophy className="w-4 h-4" />
-                </div>
-              )}
-            </div>
-            <h4 className="mt-3 text-sm font-medium text-white text-center line-clamp-2">
-              {battle.movie_b_title}
-            </h4>
-            {hasVoted && (
-              <div className="mt-2 text-center">
-                <span
-                  className={`text-2xl font-bold ${
-                    votedFor === "b" ? "text-red-500" : "text-zinc-400"
-                  }`}
-                >
-                  {percentageB}%
-                </span>
-              </div>
-            )}
-          </motion.button>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 text-center text-sm text-zinc-500">
-          {hasVoted ? (
-            <span>
-              {totalVotes.toLocaleString()} total votes - Thanks for voting!
+              {percentage}%
             </span>
-          ) : (
-            <span>Click on a movie to cast your vote</span>
-          )}
-        </div>
-      </div>
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
 }

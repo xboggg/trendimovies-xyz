@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, ThumbsUp, ThumbsDown, Send, User, Clock, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MessageCircle, ThumbsUp, ThumbsDown, Send, User, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface Comment {
@@ -31,18 +30,15 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [reactions, setReactions] = useState<Record<string, "like" | "dislike">>({});
+  const [showAll, setShowAll] = useState(false);
 
-  // Load saved name from localStorage
   useEffect(() => {
     const savedName = localStorage.getItem("commenterName");
     if (savedName) setName(savedName);
-
-    // Load reactions
     const savedReactions = JSON.parse(localStorage.getItem("commentReactions") || "{}");
     setReactions(savedReactions);
   }, []);
 
-  // Fetch comments
   useEffect(() => {
     fetchComments();
   }, [contentType, contentId]);
@@ -89,13 +85,12 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
         setComments((prev) => [newComment, ...prev]);
         setCommentText("");
         setShowForm(false);
-        // Save name for future comments
         localStorage.setItem("commenterName", name.trim());
       } else {
         const data = await res.json();
         setError(data.error || "Failed to post comment");
       }
-    } catch (error) {
+    } catch {
       setError("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -104,11 +99,7 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
 
   async function handleReaction(commentId: string, type: "like" | "dislike") {
     const existingReaction = reactions[commentId];
-
-    // If same reaction, remove it
-    if (existingReaction === type) {
-      return;
-    }
+    if (existingReaction === type) return;
 
     try {
       const res = await fetch("/api/engagement/comments/react", {
@@ -119,13 +110,9 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
 
       if (res.ok) {
         const updatedComment = await res.json();
-
-        // Update comments list
         setComments((prev) =>
           prev.map((c) => (c.id === commentId ? { ...c, ...updatedComment } : c))
         );
-
-        // Save reaction
         const newReactions = { ...reactions, [commentId]: type };
         setReactions(newReactions);
         localStorage.setItem("commentReactions", JSON.stringify(newReactions));
@@ -135,27 +122,35 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
     }
   }
 
+  const displayedComments = showAll ? comments : comments.slice(0, 3);
+
   return (
-    <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+    <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 backdrop-blur-sm rounded-2xl border border-zinc-800/50 overflow-hidden">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/50">
         <div className="flex items-center gap-2">
-          <MessageCircle className="w-5 h-5 text-red-500" />
-          <span className="font-semibold text-white">
-            Comments ({comments.length})
+          <div className="p-1.5 bg-red-500/10 rounded-lg">
+            <MessageCircle className="w-4 h-4 text-red-500" />
+          </div>
+          <span className="font-medium text-white text-sm">
+            Comments
+          </span>
+          <span className="px-2 py-0.5 bg-zinc-800 rounded-full text-xs text-zinc-400">
+            {comments.length}
           </span>
         </div>
-        <Button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(!showForm)}
-          size="sm"
-          className="gap-2"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors"
         >
-          <Send className="w-4 h-4" />
+          <Sparkles className="w-3 h-3" />
           Add Comment
-        </Button>
+        </motion.button>
       </div>
 
-      {/* Comment Form */}
+      {/* Compact Form */}
       <AnimatePresence>
         {showForm && (
           <motion.form
@@ -163,146 +158,156 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             onSubmit={handleSubmit}
-            className="p-4 bg-zinc-800/50 border-b border-zinc-800"
+            className="px-4 py-3 bg-zinc-800/30 border-b border-zinc-800/50"
           >
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-zinc-400 mb-1">Your Name</label>
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1 space-y-2">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
+                  placeholder="Your name"
                   maxLength={50}
-                  className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors"
+                  className="w-full px-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-red-500/50 transition-colors"
                 />
-              </div>
-              <div>
-                <label className="block text-sm text-zinc-400 mb-1">Your Comment</label>
                 <textarea
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Share your thoughts..."
-                  rows={3}
-                  maxLength={1000}
-                  className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors resize-none"
+                  rows={2}
+                  maxLength={500}
+                  className="w-full px-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-red-500/50 transition-colors resize-none"
                 />
-                <div className="flex justify-between mt-1">
-                  <span className="text-xs text-zinc-500">
-                    {commentText.length}/1000 characters
-                  </span>
+                {error && <p className="text-red-400 text-xs">{error}</p>}
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="px-3 py-1 text-xs text-zinc-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    <Send className="w-3 h-3" />
+                    {isSubmitting ? "..." : "Post"}
+                  </button>
                 </div>
-              </div>
-
-              {error && (
-                <div className="flex items-center gap-2 text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4" />
-                  {error}
-                </div>
-              )}
-
-              <div className="flex gap-2 justify-end">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setShowForm(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" size="sm" disabled={isSubmitting}>
-                  {isSubmitting ? "Posting..." : "Post Comment"}
-                </Button>
               </div>
             </div>
           </motion.form>
         )}
       </AnimatePresence>
 
-      {/* Comments List */}
-      <div className="divide-y divide-zinc-800">
+      {/* Comments List - Compact */}
+      <div className="max-h-[400px] overflow-y-auto">
         {isLoading ? (
-          <div className="p-8 text-center">
-            <div className="animate-pulse space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="w-10 h-10 bg-zinc-800 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-zinc-800 rounded w-1/4 mb-2"></div>
-                    <div className="h-16 bg-zinc-800 rounded"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : comments.length === 0 ? (
-          <div className="p-8 text-center">
-            <MessageCircle className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-            <p className="text-zinc-400">No comments yet. Be the first to share your thoughts!</p>
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="p-4">
-              <div className="flex gap-3">
-                {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-white">
-                      {comment.author_name}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-zinc-500">
-                      <Clock className="w-3 h-3" />
-                      {formatDistanceToNow(new Date(comment.created_at), {
-                        addSuffix: true,
-                      })}
-                    </span>
-                  </div>
-
-                  <p className="text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap">
-                    {comment.comment_text}
-                  </p>
-
-                  {/* Reactions */}
-                  <div className="flex items-center gap-4 mt-3">
-                    <button
-                      onClick={() => handleReaction(comment.id, "like")}
-                      className={`flex items-center gap-1 text-sm transition-colors ${
-                        reactions[comment.id] === "like"
-                          ? "text-green-500"
-                          : "text-zinc-500 hover:text-green-400"
-                      }`}
-                    >
-                      <ThumbsUp className="w-4 h-4" />
-                      <span>{comment.likes}</span>
-                    </button>
-                    <button
-                      onClick={() => handleReaction(comment.id, "dislike")}
-                      className={`flex items-center gap-1 text-sm transition-colors ${
-                        reactions[comment.id] === "dislike"
-                          ? "text-red-500"
-                          : "text-zinc-500 hover:text-red-400"
-                      }`}
-                    >
-                      <ThumbsDown className="w-4 h-4" />
-                      <span>{comment.dislikes}</span>
-                    </button>
-                  </div>
+          <div className="p-4 space-y-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex gap-2 animate-pulse">
+                <div className="w-8 h-8 bg-zinc-800 rounded-full"></div>
+                <div className="flex-1 space-y-1">
+                  <div className="h-3 bg-zinc-800 rounded w-1/4"></div>
+                  <div className="h-8 bg-zinc-800 rounded"></div>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
+        ) : comments.length === 0 ? (
+          <div className="py-8 text-center">
+            <MessageCircle className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+            <p className="text-zinc-500 text-sm">No comments yet. Be the first to share your thoughts!</p>
+          </div>
+        ) : (
+          <>
+            {displayedComments.map((comment, idx) => (
+              <motion.div
+                key={comment.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="px-4 py-3 hover:bg-zinc-800/20 transition-colors border-b border-zinc-800/30 last:border-0"
+              >
+                <div className="flex gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-bold">
+                      {comment.author_name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-medium text-white text-sm">
+                        {comment.author_name}
+                      </span>
+                      <span className="text-[10px] text-zinc-500">
+                        {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                    <p className="text-zinc-300 text-sm leading-relaxed line-clamp-3">
+                      {comment.comment_text}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <button
+                        onClick={() => handleReaction(comment.id, "like")}
+                        className={`flex items-center gap-1 text-xs transition-colors ${
+                          reactions[comment.id] === "like"
+                            ? "text-green-400"
+                            : "text-zinc-500 hover:text-green-400"
+                        }`}
+                      >
+                        <ThumbsUp className="w-3 h-3" />
+                        <span>{comment.likes}</span>
+                      </button>
+                      <button
+                        onClick={() => handleReaction(comment.id, "dislike")}
+                        className={`flex items-center gap-1 text-xs transition-colors ${
+                          reactions[comment.id] === "dislike"
+                            ? "text-red-400"
+                            : "text-zinc-500 hover:text-red-400"
+                        }`}
+                      >
+                        <ThumbsDown className="w-3 h-3" />
+                        <span>{comment.dislikes}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Show More/Less */}
+            {comments.length > 3 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="w-full py-2 flex items-center justify-center gap-1 text-xs text-red-400 hover:text-red-300 transition-colors"
+              >
+                {showAll ? (
+                  <>
+                    <ChevronUp className="w-3 h-3" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3 h-3" />
+                    View {comments.length - 3} More Comments
+                  </>
+                )}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 }
 
-// Hot Discussions component for homepage
+// Hot Discussions - Compact Version
 interface HotDiscussionsProps {
   limit?: number;
 }
@@ -331,47 +336,49 @@ export function HotDiscussions({ limit = 5 }: HotDiscussionsProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-        <div className="animate-pulse space-y-4">
+      <div className="bg-zinc-900/50 rounded-xl p-4 border border-zinc-800/50">
+        <div className="animate-pulse space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 bg-zinc-800 rounded"></div>
+            <div key={i} className="h-12 bg-zinc-800 rounded"></div>
           ))}
         </div>
       </div>
     );
   }
 
-  if (discussions.length === 0) {
-    return null;
-  }
+  if (discussions.length === 0) return null;
 
   return (
-    <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
-      <div className="flex items-center gap-2 p-4 border-b border-zinc-800">
-        <MessageCircle className="w-5 h-5 text-red-500" />
-        <span className="font-semibold text-white">Hot Discussions</span>
+    <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 backdrop-blur-sm rounded-2xl border border-zinc-800/50 overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800/50">
+        <div className="p-1.5 bg-orange-500/10 rounded-lg">
+          <Sparkles className="w-4 h-4 text-orange-500" />
+        </div>
+        <span className="font-medium text-white text-sm">Hot Discussions</span>
       </div>
 
-      <div className="divide-y divide-zinc-800">
-        {discussions.map((discussion) => (
-          <div key={discussion.id} className="p-4 hover:bg-zinc-800/50 transition-colors">
-            <p className="text-zinc-300 text-sm line-clamp-2 mb-2">
+      <div className="divide-y divide-zinc-800/30">
+        {discussions.map((discussion, idx) => (
+          <motion.div
+            key={discussion.id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: idx * 0.05 }}
+            className="px-4 py-3 hover:bg-zinc-800/20 transition-colors"
+          >
+            <p className="text-zinc-300 text-sm line-clamp-2 mb-1">
               &ldquo;{discussion.comment_text}&rdquo;
             </p>
-            <div className="flex items-center justify-between text-xs text-zinc-500">
+            <div className="flex items-center justify-between text-[10px] text-zinc-500">
               <span>- {discussion.author_name}</span>
-              <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1">
-                  <ThumbsUp className="w-3 h-3" />
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-0.5">
+                  <ThumbsUp className="w-2.5 h-2.5" />
                   {discussion.likes}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MessageCircle className="w-3 h-3" />
-                  {(discussion.replies?.length || 0)} replies
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
