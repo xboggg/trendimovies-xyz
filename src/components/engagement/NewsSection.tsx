@@ -30,7 +30,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
   const featured = articles[0];
   const rest = articles.slice(1);
 
-  const categories = ["All", ...new Set(articles.map((a) => a.category).filter(Boolean))];
+  const categories: string[] = ["All", ...new Set(articles.map((a) => a.category).filter((c): c is string => Boolean(c)))];
 
   const filteredArticles = activeCategory && activeCategory !== "All"
     ? articles.filter((a) => a.category === activeCategory)
