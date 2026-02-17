@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   // Enable standalone output for Docker deployment
   output: "standalone",
 
-  // Image optimization
+  // Image optimization - WITH DISK SPACE PROTECTION
   images: {
     remotePatterns: [
       {
@@ -17,22 +17,23 @@ const nextConfig: NextConfig = {
         hostname: "img.youtube.com",
         pathname: "/vi/**",
       },
-      // News article images - allow any external HTTPS images
+      // News article images - allow external but UNOPTIMIZED to prevent caching
       {
         protocol: "https",
         hostname: "**",
       },
-      {
-        protocol: "http",
-        hostname: "**",
-      },
     ],
+
     // Allow data URLs for placeholders
     dangerouslyAllowSVG: true,
-    // Optimize images for production
-    minimumCacheTTL: 60 * 60 * 24, // 24 hours
-    // Use unoptimized for data URLs
-    unoptimized: false,
+
+    // CRITICAL: Keep unoptimized=true to prevent disk bloat
+    // This means images are served directly from source without caching
+    unoptimized: true,
+
+    // Limit image sizes (only applies if unoptimized is false)
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
 
   // Headers for security and caching

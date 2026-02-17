@@ -100,12 +100,16 @@ export function Hero({ movies }: HeroProps) {
 
             {/* Buttons */}
             <div className="flex items-center gap-4">
-              <Link href={`/movies/${currentMovie.id}`}>
-                <Button size="lg" className="gap-2">
+              <a
+                href={`https://trendimovies.com/movie/${currentMovie.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" className="gap-2 bg-red-600 hover:bg-red-700">
                   <Play className="w-5 h-5 fill-white" />
                   Watch Now
                 </Button>
-              </Link>
+              </a>
               <Link href={`/movies/${currentMovie.id}`}>
                 <Button variant="secondary" size="lg" className="gap-2">
                   <Info className="w-5 h-5" />

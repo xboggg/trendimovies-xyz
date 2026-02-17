@@ -28,6 +28,7 @@ import { PersonCard, MovieCard } from "@/components/ui/card";
 import { Section, ScrollRow } from "@/components/ui/section";
 import { VideoPlayer } from "@/components/movies/VideoPlayer";
 import { WatchProviders } from "@/components/movies/WatchProviders";
+import { Comments } from "@/components/engagement";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -202,7 +203,7 @@ export default async function MovieDetailPage({ params }: Props) {
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
               <a
-                href={`https://trendimovies.com/tmdb-redirect.php?id=${id}&type=movie`}
+                href={`https://trendimovies.com/movie/${id}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -304,6 +305,15 @@ export default async function MovieDetailPage({ params }: Props) {
             )}
           </div>
         )}
+
+        {/* Comments Section */}
+        <div className="mt-12 mb-8">
+          <Comments
+            contentType="movie"
+            contentId={id}
+            contentTitle={movie.title}
+          />
+        </div>
       </div>
     </div>
   );

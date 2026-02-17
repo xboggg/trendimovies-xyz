@@ -58,17 +58,20 @@ export function formatMoney(amount: number): string {
   }).format(amount);
 }
 
-export function formatVoteAverage(vote: number): string {
+export function formatVoteAverage(vote: number | null | undefined): string {
+  if (vote === null || vote === undefined) return "N/A";
   return vote.toFixed(1);
 }
 
-export function getVoteColor(vote: number): string {
+export function getVoteColor(vote: number | null | undefined): string {
+  if (vote === null || vote === undefined) return "text-zinc-500";
   if (vote >= 7) return "text-green-500";
   if (vote >= 5) return "text-yellow-500";
   return "text-red-500";
 }
 
-export function slugify(text: string): string {
+export function slugify(text: string | null | undefined): string {
+  if (!text) return "";
   return text
     .toLowerCase()
     .replace(/[^\w\s-]/g, "")
@@ -82,10 +85,12 @@ export function truncate(text: string, length: number): string {
   return text.slice(0, length).trim() + "...";
 }
 
-export function getYouTubeEmbedUrl(key: string): string {
+export function getYouTubeEmbedUrl(key: string | null | undefined): string {
+  if (!key) return "";
   return `https://www.youtube.com/embed/${key}`;
 }
 
-export function getYouTubeThumbnail(key: string): string {
+export function getYouTubeThumbnail(key: string | null | undefined): string {
+  if (!key) return "";
   return `https://img.youtube.com/vi/${key}/maxresdefault.jpg`;
 }

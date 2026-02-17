@@ -11,6 +11,7 @@ interface SectionProps {
   viewAllText?: string;
   children: React.ReactNode;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 export function Section({
@@ -19,11 +20,15 @@ export function Section({
   viewAllText = "View All",
   children,
   className,
+  icon,
 }: SectionProps) {
   return (
     <section className={cn("py-8", className)}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white">{title}</h2>
+        <div className="flex items-center gap-2">
+          {icon}
+          <h2 className="text-2xl font-bold text-white">{title}</h2>
+        </div>
         {href && (
           <Link
             href={href}

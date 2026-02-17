@@ -214,7 +214,7 @@ export default async function TVDetailPage({ params }: Props) {
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
               <a
-                href={`https://trendimovies.com/tmdb-redirect.php?id=${id}&type=tv`}
+                href={`https://trendimovies.com/series/${id}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

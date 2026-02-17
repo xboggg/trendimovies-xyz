@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: "Latest news about movies, TV shows, streaming, and entertainment industry.",
 };
 
-// Force dynamic rendering to always fetch from database at runtime
-export const dynamic = "force-dynamic";
+// Revalidate every 5 minutes instead of force-dynamic to improve performance
+export const revalidate = 300;
 
 const ARTICLES_PER_PAGE = 12;
 
@@ -23,26 +23,25 @@ async function getNews(page: number): Promise<{ articles: NewsArticle[]; totalCo
   const from = (page - 1) * ARTICLES_PER_PAGE;
   const to = from + ARTICLES_PER_PAGE - 1;
 
-  // Get total count
-  const { count } = await supabase
-    .from("news_articles")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "published");
+  try {
+    // Single query with count to avoid multiple requests
+    const { data, error, count } = await supabase
+      .from("news_articles")
+      .select("*", { count: "exact" })
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .range(from, to);
 
-  // Get paginated articles
-  const { data, error } = await supabase
-    .from("news_articles")
-    .select("*")
-    .eq("status", "published")
-    .order("published_at", { ascending: false })
-    .range(from, to);
+    if (error) {
+      console.error("Error fetching news:", error);
+      return { articles: [], totalCount: 0 };
+    }
 
-  if (error) {
-    console.error("Error fetching news:", error);
+    return { articles: data || [], totalCount: count || 0 };
+  } catch (err) {
+    console.error("News fetch error:", err);
     return { articles: [], totalCount: 0 };
   }
-
-  return { articles: data || [], totalCount: count || 0 };
 }
 
 export default async function NewsPage({ searchParams }: PageProps) {

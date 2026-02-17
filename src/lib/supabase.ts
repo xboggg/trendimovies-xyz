@@ -1,13 +1,41 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://db.techtrendi.com';
+// Use localhost:8090 (Kong direct) for server-side calls to avoid nginx SSL issues
+// External clients still use https://db.techtrendi.com
+const isServer = typeof window === 'undefined';
+const supabaseUrl = isServer
+  ? 'http://localhost:8090'
+  : (process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://db.techtrendi.com');
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Configure Supabase client to use 'public' schema for news articles
+// The db.techtrendi.com PostgREST exposes both 'siteops' and 'public' schemas
+// Default is 'siteops', so we need to specify 'public' for news_articles table
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  db: { schema: 'public' },
+  global: {
+    fetch: (url, options = {}) => {
+      return fetch(url, {
+        ...options,
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      });
+    },
+  },
+});
 
 export const supabaseAdmin = supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
+  ? createClient(supabaseUrl, supabaseServiceKey, {
+      db: { schema: 'public' },
+      global: {
+        fetch: (url, options = {}) => {
+          return fetch(url, {
+            ...options,
+            signal: AbortSignal.timeout(10000), // 10 second timeout
+          });
+        },
+      },
+    })
   : supabase;
 
 export interface NewsArticle {
