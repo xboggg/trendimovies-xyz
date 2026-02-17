@@ -6,7 +6,10 @@ const isServer = typeof window === 'undefined';
 const supabaseUrl = isServer
   ? 'http://localhost:8090'
   : (process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://db.techtrendi.com');
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+// Default anon key for build time - will be overridden by env at runtime
+const defaultAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNjQxNzY5MjAwLCJleHAiOjE3OTk1MzU2MDB9.lbPqMemEL_VFnCma2zeuJ1MfFLNQ7_VXRgaacXeeReQ';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || defaultAnonKey;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Configure Supabase client to use 'public' schema for news articles
