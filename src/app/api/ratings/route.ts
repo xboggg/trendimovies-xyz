@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase";
 import { cookies } from "next/headers";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // GET - Fetch rating stats for a content item
 export async function GET(request: NextRequest) {
@@ -22,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all ratings for this content
-    const { data: ratings, error } = await supabase
+    const { data: ratings, error } = await supabaseAdmin
       .from("user_ratings")
       .select("rating")
       .eq("content_type", contentType)
@@ -99,7 +94,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip");
 
     // Check if user already rated this content
-    const { data: existingRating } = await supabase
+    const { data: existingRating } = await supabaseAdmin
       .from("user_ratings")
       .select("id")
       .eq("content_type", contentType)
@@ -109,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     if (existingRating) {
       // Update existing rating
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from("user_ratings")
         .update({
           rating,
@@ -129,7 +124,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert new rating
-    const { error } = await supabase.from("user_ratings").insert({
+    const { error } = await supabaseAdmin.from("user_ratings").insert({
       content_type: contentType,
       content_id: contentId,
       content_title: contentTitle,

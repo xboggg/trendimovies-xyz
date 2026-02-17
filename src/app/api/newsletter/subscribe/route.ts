@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already subscribed
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from("newsletter_subscribers")
       .select("id, is_active")
       .eq("email", email.toLowerCase())
@@ -34,7 +29,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Reactivate subscription
-      await supabase
+      await supabaseAdmin
         .from("newsletter_subscribers")
         .update({
           is_active: true,
@@ -51,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new subscription
-    const { error } = await supabase.from("newsletter_subscribers").insert({
+    const { error } = await supabaseAdmin.from("newsletter_subscribers").insert({
       email: email.toLowerCase(),
       name: name || null,
       preferences: preferences || { movies: true, tvShows: true, trivia: false },

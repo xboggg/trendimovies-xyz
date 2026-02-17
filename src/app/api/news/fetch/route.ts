@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from "@/lib/supabase";
 
 const MOVIE_TV_KEYWORDS = [
   'movie', 'film', 'cinema', 'box office', 'trailer', 'sequel', 'prequel',
@@ -280,7 +275,7 @@ export async function POST(request: Request) {
     const seenUrls = new Set<string>();
     const seenTitles: string[] = [];
 
-    const { data: existingArticles } = await supabase
+    const { data: existingArticles } = await supabaseAdmin
       .from("news_articles")
       .select("source_url, title")
       .order("created_at", { ascending: false })
@@ -314,7 +309,7 @@ export async function POST(request: Request) {
       const rewritten = await rewriteWithAI(article.title, article.description);
       const slug = generateSlug(rewritten.title);
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("news_articles")
         .insert({
           title: rewritten.title,
