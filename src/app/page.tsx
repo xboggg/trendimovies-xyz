@@ -1,4 +1,4 @@
-import { Hero, MovieRow } from "@/components/movies";
+import { Hero, MovieRow, TrendingRow } from "@/components/movies";
 import { TVCard } from "@/components/ui/card";
 import { Section, ContentGrid } from "@/components/ui/section";
 import {
@@ -20,7 +20,6 @@ import {
   getUpcomingMovies,
   getTopRatedMovies,
   getTrendingTV,
-  getPopularTV,
 } from "@/services/tmdb";
 import { supabase } from "@/lib/supabase";
 
@@ -103,7 +102,6 @@ export default async function HomePage() {
     upcomingMovies,
     topRatedMovies,
     trendingTV,
-    popularTV,
     activePoll,
     activeBattle,
     todayHistory,
@@ -115,7 +113,6 @@ export default async function HomePage() {
     getUpcomingMovies(),
     getTopRatedMovies(),
     getTrendingTV("week"),
-    getPopularTV(),
     getActivePoll(),
     getActiveBattle(),
     getTodayInHistory(),
@@ -136,19 +133,12 @@ export default async function HomePage() {
 
       {/* Content Sections */}
       <div className="container mx-auto px-4 -mt-16 relative z-10">
-        {/* Row 1: Trending + Poll Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          <div className="lg:col-span-2">
-            <MovieRow
-              title="Trending This Week"
-              movies={trendingMovies.results}
-              href="/movies?category=trending"
-            />
-          </div>
-          <div className="lg:col-span-1">
-            {activePoll && <DailyPoll poll={activePoll} />}
-          </div>
-        </div>
+        {/* Trending This Week - Expanded with auto-slide */}
+        <TrendingRow
+          title="Trending This Week"
+          movies={trendingMovies.results}
+          href="/movies?category=trending"
+        />
 
         {/* User's Watchlist (client-side) */}
         <WatchlistDisplay className="mb-10" maxItems={10} showEmpty={false} />
@@ -161,12 +151,11 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Movie Battle - Fixed Width */}
-        {activeBattle && (
-          <div className="mb-10">
-            <MovieBattle battle={activeBattle} />
-          </div>
-        )}
+        {/* Movie Battle + Daily Poll Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          {activeBattle && <MovieBattle battle={activeBattle} />}
+          {activePoll && <DailyPoll poll={activePoll} />}
+        </div>
 
         {/* Coming Soon with Arrows and Auto-scroll */}
         <ComingSoonRow movies={upcomingMovies.results} title="Coming Soon" />
@@ -187,7 +176,7 @@ export default async function HomePage() {
           href="/movies?category=now_playing"
         />
 
-        {/* Latest News Section - Redesigned with animations */}
+        {/* Latest News Section - Unique Magazine Layout */}
         {latestNews.length > 0 && <NewsSection articles={latestNews} />}
 
         {/* Ad Zone 2 */}
@@ -203,8 +192,8 @@ export default async function HomePage() {
           <HotDiscussions limit={5} />
         </div>
 
-        {/* Popular TV Shows */}
-        <Section title="Popular TV Shows" href="/tv?category=popular">
+        {/* Trending TV Shows - Only one TV section now */}
+        <Section title="Trending TV Shows" href="/tv?category=trending">
           <ContentGrid columns={5}>
             {trendingTV.results.slice(0, 10).map((show) => (
               <TVCard key={show.id} show={show} />
@@ -233,15 +222,6 @@ export default async function HomePage() {
           movies={popularMovies.results}
           href="/movies?category=popular"
         />
-
-        {/* Trending TV */}
-        <Section title="Trending TV Shows" href="/tv?category=trending">
-          <ContentGrid columns={5}>
-            {popularTV.results.slice(0, 10).map((show) => (
-              <TVCard key={show.id} show={show} />
-            ))}
-          </ContentGrid>
-        </Section>
 
         {/* Newsletter Card at Bottom */}
         <div className="mb-10 max-w-md mx-auto">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Info, Star, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { Play, Info, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getBackdropUrl, getImageUrl, formatYear, formatVoteAverage } from "@/lib/utils";
 import type { Movie } from "@/types";
@@ -89,7 +89,17 @@ export function Hero({ movies }: HeroProps) {
 
       {/* Content */}
       <div className="relative h-full container mx-auto px-4 flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full">
+        {/* Left Arrow - Inside container, positioned after content starts */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={goPrev}
+          className="absolute left-4 lg:left-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </motion.button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full pl-16 lg:pl-12">
           {/* Left: Info */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -126,7 +136,7 @@ export function Hero({ movies }: HeroProps) {
                 </span>
               </motion.div>
 
-              {/* Title with animated underline */}
+              {/* Title */}
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -136,7 +146,7 @@ export function Hero({ movies }: HeroProps) {
                 {currentMovie.title}
               </motion.h1>
 
-              {/* Overview with fade */}
+              {/* Overview */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -182,7 +192,7 @@ export function Hero({ movies }: HeroProps) {
           </AnimatePresence>
 
           {/* Right: Poster Card (Desktop) */}
-          <div className="hidden lg:flex justify-end">
+          <div className="hidden lg:flex justify-end pr-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentMovie.id}
@@ -214,23 +224,13 @@ export function Hero({ movies }: HeroProps) {
             </AnimatePresence>
           </div>
         </div>
-      </div>
 
-      {/* Navigation Arrows */}
-      <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={goPrev}
-          className="pointer-events-auto p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </motion.button>
+        {/* Right Arrow - Inside container */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={goNext}
-          className="pointer-events-auto p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
+          className="absolute right-4 lg:right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
         >
           <ChevronRight className="w-6 h-6" />
         </motion.button>

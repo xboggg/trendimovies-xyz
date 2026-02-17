@@ -57,7 +57,6 @@ export function CountdownCard({ movie }: CountdownCardProps) {
         transition={{ type: "spring", stiffness: 300 }}
         className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800/50 hover:border-red-500/30 shadow-lg hover:shadow-red-500/10 transition-all"
       >
-        {/* Poster */}
         <div className="relative aspect-[2/3]">
           <Image
             src={getImageUrl(movie.poster_path, "w342")}
@@ -66,10 +65,8 @@ export function CountdownCard({ movie }: CountdownCardProps) {
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="200px"
           />
-          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
-          {/* Coming Soon Badge */}
           {isComingSoon && (
             <motion.div
               initial={{ scale: 0 }}
@@ -81,20 +78,14 @@ export function CountdownCard({ movie }: CountdownCardProps) {
             </motion.div>
           )}
 
-          {/* Countdown overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            {/* Title */}
             <h3 className="text-white font-bold text-sm mb-1.5 line-clamp-2 group-hover:text-red-400 transition-colors">
               {movie.title}
             </h3>
-
-            {/* Release date */}
             <div className="flex items-center gap-1.5 text-zinc-400 text-xs mb-3">
               <Calendar className="w-3 h-3" />
               <span>{formatDate(movie.release_date)}</span>
             </div>
-
-            {/* Countdown timer */}
             <div className="grid grid-cols-4 gap-1.5">
               <TimeUnit value={timeLeft.days} label="Days" isHighlight />
               <TimeUnit value={timeLeft.hours} label="Hrs" />
@@ -114,12 +105,10 @@ function TimeUnit({ value, label, isHighlight, pulse }: { value: number; label: 
       animate={pulse ? { scale: [1, 1.05, 1] } : {}}
       transition={{ duration: 1, repeat: Infinity }}
       className={`rounded-lg px-1 py-2 text-center ${
-        isHighlight
-          ? "bg-red-600/90"
-          : "bg-zinc-800/90 backdrop-blur-sm"
+        isHighlight ? "bg-red-600/90" : "bg-zinc-800/90 backdrop-blur-sm"
       }`}
     >
-      <div className={`font-bold text-lg leading-none ${isHighlight ? "text-white" : "text-white"}`}>
+      <div className="font-bold text-lg leading-none text-white">
         {value.toString().padStart(2, "0")}
       </div>
       <div className={`text-[9px] uppercase mt-0.5 ${isHighlight ? "text-red-200" : "text-zinc-400"}`}>
@@ -129,7 +118,7 @@ function TimeUnit({ value, label, isHighlight, pulse }: { value: number; label: 
   );
 }
 
-// Enhanced Coming Soon Row with arrows and auto-scroll
+// Enhanced Coming Soon Row with CONTINUOUS smooth scrolling
 interface ComingSoonRowProps {
   movies: Movie[];
   title?: string;
@@ -137,9 +126,11 @@ interface ComingSoonRowProps {
 
 export function ComingSoonRow({ movies, title = "Coming Soon" }: ComingSoonRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [isAutoScrolling, setIsAutoScrolling] = useState(true);
+  const scrollSpeed = 0.5; // pixels per frame
 
   const upcomingMovies = movies.filter((movie) => {
     const releaseDate = new Date(movie.release_date);
@@ -164,23 +155,32 @@ export function ComingSoonRow({ movies, title = "Coming Soon" }: ComingSoonRowPr
     }
   }, []);
 
-  // Auto-scroll
+  // Continuous smooth auto-scroll animation
   useEffect(() => {
-    if (!isAutoScrolling || !scrollRef.current) return;
+    if (isPaused || !scrollRef.current) return;
 
-    const interval = setInterval(() => {
-      if (scrollRef.current) {
+    const animate = () => {
+      if (scrollRef.current && !isPaused) {
         const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        if (scrollLeft >= scrollWidth - clientWidth - 10) {
-          scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+
+        // Reset to start when reaching end
+        if (scrollLeft >= scrollWidth - clientWidth - 1) {
+          scrollRef.current.scrollLeft = 0;
         } else {
-          scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+          scrollRef.current.scrollLeft += scrollSpeed;
         }
       }
-    }, 4000);
+      animationRef.current = requestAnimationFrame(animate);
+    };
 
-    return () => clearInterval(interval);
-  }, [isAutoScrolling]);
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused, scrollSpeed]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -196,8 +196,10 @@ export function ComingSoonRow({ movies, title = "Coming Soon" }: ComingSoonRowPr
   return (
     <section
       className="mb-12"
-      onMouseEnter={() => setIsAutoScrolling(false)}
-      onMouseLeave={() => setIsAutoScrolling(true)}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
@@ -275,8 +277,8 @@ export function ComingSoonRow({ movies, title = "Coming Soon" }: ComingSoonRowPr
         {/* Movies Row */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
-          style={{ scrollSnapType: "x mandatory" }}
+          className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
+          style={{ scrollBehavior: "auto" }}
         >
           {upcomingMovies.slice(0, 15).map((movie, idx) => (
             <motion.div
@@ -285,7 +287,6 @@ export function ComingSoonRow({ movies, title = "Coming Soon" }: ComingSoonRowPr
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               className="flex-shrink-0 w-[180px]"
-              style={{ scrollSnapAlign: "start" }}
             >
               <CountdownCard movie={movie} />
             </motion.div>
