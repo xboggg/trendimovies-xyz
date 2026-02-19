@@ -51,7 +51,7 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
         setComments(data);
       }
     } catch (error) {
-      console.error("Failed to fetch comments:", error);
+      // console.error("Failed to fetch comments:", error);
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +118,7 @@ export function Comments({ contentType, contentId, contentTitle }: CommentsProps
         localStorage.setItem("commentReactions", JSON.stringify(newReactions));
       }
     } catch (error) {
-      console.error("Failed to react:", error);
+      // console.error("Failed to react:", error);
     }
   }
 
@@ -328,7 +328,7 @@ export function HotDiscussions({ limit = 5 }: HotDiscussionsProps) {
         setDiscussions(data);
       }
     } catch (error) {
-      console.error("Failed to fetch hot discussions:", error);
+      // console.error("Failed to fetch hot discussions:", error);
     } finally {
       setIsLoading(false);
     }

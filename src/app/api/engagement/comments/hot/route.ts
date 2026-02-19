@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(comments || []);
   } catch (error) {
-    console.error("Error fetching hot discussions:", error);
+    // console.error("Error fetching hot discussions:", error);
     return NextResponse.json({ error: "Failed to fetch discussions" }, { status: 500 });
   }
 }

@@ -20,7 +20,7 @@ export function AdBanner({ slot, format = "auto", className = "" }: AdBannerProp
       try {
         ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
       } catch (error) {
-        console.error("AdSense error:", error);
+        // console.error("AdSense error:", error);
       }
     }
   }, []);

@@ -8,3 +8,4 @@ export { Newsletter } from "./Newsletter";
 export { UserRating } from "./UserRating";
 export { WatchlistButton, WatchlistDisplay, useWatchlist } from "./Watchlist";
 export { NewsSection } from "./NewsSection";
+export { SocialFollow } from "./SocialFollow";

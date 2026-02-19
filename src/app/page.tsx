@@ -1,6 +1,7 @@
 import { Hero, MovieRow, TrendingRow } from "@/components/movies";
 import { TVCard } from "@/components/ui/card";
 import { Section, ContentGrid } from "@/components/ui/section";
+import { GoldGlowLine } from "@/components/ui/GoldGlowLine";
 import {
   DailyPoll,
   MovieBattle,
@@ -11,6 +12,7 @@ import {
   Newsletter,
   WatchlistDisplay,
   NewsSection,
+  SocialFollow,
 } from "@/components/engagement";
 import { WebsiteJsonLd } from "@/components/seo";
 import {
@@ -131,8 +133,14 @@ export default async function HomePage() {
       {/* Hero Section - Redesigned */}
       <Hero movies={trendingMovies.results} />
 
+      {/* Gold Glow Line Divider */}
+      <GoldGlowLine />
+
       {/* Content Sections */}
-      <div className="container mx-auto px-4 -mt-16 relative z-10">
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Latest News Section - Right after Hero */}
+        {latestNews.length > 0 && <NewsSection articles={latestNews} />}
+
         {/* Trending This Week - Expanded with auto-slide */}
         <TrendingRow
           title="Trending This Week"
@@ -143,18 +151,14 @@ export default async function HomePage() {
         {/* User's Watchlist (client-side) */}
         <WatchlistDisplay className="mb-10" maxItems={10} showEmpty={false} />
 
-        {/* Ad Zone 1 */}
-        <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl text-center">
-          <span className="text-zinc-600 text-xs">Advertisement</span>
-          <div className="h-20 flex items-center justify-center text-zinc-700">
-            Ad Space - 728x90
-          </div>
-        </div>
-
-        {/* Movie Battle + Daily Poll Side by Side */}
+        {/* Movie Battle + Daily Poll Side by Side - Fixed alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-          {activeBattle && <MovieBattle battle={activeBattle} />}
-          {activePoll && <DailyPoll poll={activePoll} />}
+          <div className="w-full">
+            {activeBattle ? <MovieBattle battle={activeBattle} /> : <div className="hidden lg:block" />}
+          </div>
+          <div className="w-full">
+            {activePoll ? <DailyPoll poll={activePoll} /> : <div className="hidden lg:block" />}
+          </div>
         </div>
 
         {/* Coming Soon with Arrows and Auto-scroll */}
@@ -166,26 +170,12 @@ export default async function HomePage() {
           <ThisDayInHistory events={todayHistory} />
         </div>
 
-        {/* Newsletter Inline */}
-        <Newsletter variant="inline" className="mb-10" />
-
         {/* Now Playing */}
         <MovieRow
           title="Now Playing in Theaters"
           movies={nowPlayingMovies.results}
           href="/movies?category=now_playing"
         />
-
-        {/* Latest News Section - Unique Magazine Layout */}
-        {latestNews.length > 0 && <NewsSection articles={latestNews} />}
-
-        {/* Ad Zone 2 */}
-        <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl text-center">
-          <span className="text-zinc-600 text-xs">Advertisement</span>
-          <div className="h-20 flex items-center justify-center text-zinc-700">
-            Ad Space - 728x90
-          </div>
-        </div>
 
         {/* Hot Discussions */}
         <div className="mb-10">
@@ -208,14 +198,6 @@ export default async function HomePage() {
           href="/movies?category=top_rated"
         />
 
-        {/* Ad Zone 3 */}
-        <div className="mb-10 p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl text-center">
-          <span className="text-zinc-600 text-xs">Advertisement</span>
-          <div className="h-20 flex items-center justify-center text-zinc-700">
-            Ad Space - 728x90
-          </div>
-        </div>
-
         {/* Popular Movies */}
         <MovieRow
           title="Popular Movies"
@@ -223,9 +205,10 @@ export default async function HomePage() {
           href="/movies?category=popular"
         />
 
-        {/* Newsletter Card at Bottom */}
-        <div className="mb-10 max-w-md mx-auto">
+        {/* Newsletter + Social Follow Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           <Newsletter variant="card" />
+          <SocialFollow />
         </div>
       </div>
     </div>

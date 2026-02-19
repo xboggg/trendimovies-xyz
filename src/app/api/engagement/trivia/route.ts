@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get("limit") || "5");
+    const limit = parseInt(searchParams.get("limit") || "10");
 
     // Get random active questions
     // Using a random sort - in production you might want a more sophisticated approach
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(shuffled);
   } catch (error) {
-    console.error("Error fetching trivia:", error);
+    // console.error("Error fetching trivia:", error);
     return NextResponse.json({ error: "Failed to fetch trivia" }, { status: 500 });
   }
 }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error saving trivia score:", error);
+    // console.error("Error saving trivia score:", error);
     return NextResponse.json({ error: "Failed to save score" }, { status: 500 });
   }
 }

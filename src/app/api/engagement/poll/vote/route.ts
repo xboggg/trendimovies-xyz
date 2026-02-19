@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(updatedPoll);
   } catch (error) {
-    console.error("Error voting:", error);
+    // console.error("Error voting:", error);
     return NextResponse.json({ error: "Failed to submit vote" }, { status: 500 });
   }
 }

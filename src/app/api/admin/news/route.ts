@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ success: true, articles });
   } catch (error: any) {
-    console.error("Error fetching news:", error);
+    // console.error("Error fetching news:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -84,7 +84,7 @@ export async function PUT(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ success: true, article });
   } catch (error: any) {
-    console.error("Error updating news:", error);
+    // console.error("Error updating news:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ success: true, message: "Article deleted successfully" });
   } catch (error: any) {
-    console.error("Error deleting news:", error);
+    // console.error("Error deleting news:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

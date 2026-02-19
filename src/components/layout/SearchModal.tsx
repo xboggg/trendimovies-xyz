@@ -66,7 +66,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         setResults(data.results?.slice(0, 8) || []);
         setSelectedIndex(0);
       } catch (error) {
-        console.error("Search error:", error);
+        // console.error("Search error:", error);
       } finally {
         setIsLoading(false);
       }

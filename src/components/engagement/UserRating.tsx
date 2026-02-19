@@ -57,7 +57,7 @@ export function UserRating({
         setStats(data);
       }
     } catch (error) {
-      console.error("Failed to fetch rating stats:", error);
+      // console.error("Failed to fetch rating stats:", error);
     }
   };
 

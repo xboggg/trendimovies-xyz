@@ -94,7 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
   } catch (error) {
-    console.error("Error fetching movies for sitemap:", error);
+    // console.error("Error fetching movies for sitemap:", error);
   }
 
   // Dynamic TV pages
@@ -117,7 +117,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
   } catch (error) {
-    console.error("Error fetching TV shows for sitemap:", error);
+    // console.error("Error fetching TV shows for sitemap:", error);
   }
 
   // News articles
@@ -139,7 +139,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
     }
   } catch (error) {
-    console.error("Error fetching news for sitemap:", error);
+    // console.error("Error fetching news for sitemap:", error);
   }
 
   return [...staticPages, ...moviePages, ...tvPages, ...newsPages];

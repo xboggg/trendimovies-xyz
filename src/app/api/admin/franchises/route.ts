@@ -31,7 +31,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, franchises });
   } catch (error: any) {
-    console.error("Error fetching franchises:", error);
+    // console.error("Error fetching franchises:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, franchise: newFranchise });
   } catch (error: any) {
-    console.error("Error creating franchise:", error);
+    // console.error("Error creating franchise:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true, franchise: updatedFranchise });
   } catch (error: any) {
-    console.error("Error updating franchise:", error);
+    // console.error("Error updating franchise:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -135,7 +135,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Franchise deleted successfully" });
   } catch (error: any) {
-    console.error("Error deleting franchise:", error);
+    // console.error("Error deleting franchise:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

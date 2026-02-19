@@ -1,43 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Use localhost:8090 (Kong direct) for server-side calls to avoid nginx SSL issues
-// External clients still use https://db.techtrendi.com
-const isServer = typeof window === 'undefined';
-const supabaseUrl = isServer
-  ? 'http://localhost:8090'
-  : (process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://db.techtrendi.com');
+// Always use the remote Supabase at db.techtrendi.com
+const supabaseUrl = 'https://db.techtrendi.com';
 
-// Default anon key for build time - will be overridden by env at runtime
-const defaultAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNjQxNzY5MjAwLCJleHAiOjE3OTk1MzU2MDB9.lbPqMemEL_VFnCma2zeuJ1MfFLNQ7_VXRgaacXeeReQ';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || defaultAnonKey;
+// Anon key for public access
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNjQxNzY5MjAwLCJleHAiOjE3OTk1MzU2MDB9.lbPqMemEL_VFnCma2zeuJ1MfFLNQ7_VXRgaacXeeReQ';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Configure Supabase client to use 'public' schema for news articles
-// The db.techtrendi.com PostgREST exposes both 'siteops' and 'public' schemas
-// Default is 'siteops', so we need to specify 'public' for news_articles table
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   db: { schema: 'public' },
-  global: {
-    fetch: (url, options = {}) => {
-      return fetch(url, {
-        ...options,
-        signal: AbortSignal.timeout(10000), // 10 second timeout
-      });
-    },
-  },
 });
 
 export const supabaseAdmin = supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey, {
       db: { schema: 'public' },
-      global: {
-        fetch: (url, options = {}) => {
-          return fetch(url, {
-            ...options,
-            signal: AbortSignal.timeout(10000), // 10 second timeout
-          });
-        },
-      },
     })
   : supabase;
 

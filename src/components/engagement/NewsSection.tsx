@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,15 +26,17 @@ function NewsTicker({ articles }: { articles: NewsArticle[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    if (articles.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % articles.length);
     }, 4000);
     return () => clearInterval(interval);
   }, [articles.length]);
 
+  if (articles.length === 0) return null;
+
   return (
     <div className="relative overflow-hidden h-10 bg-gradient-to-r from-red-600 via-red-500 to-red-600 rounded-lg">
-      {/* Animated background pattern */}
       <motion.div
         className="absolute inset-0 opacity-20"
         animate={{ backgroundPosition: ["0% 0%", "100% 0%"] }}
@@ -61,7 +63,7 @@ function NewsTicker({ articles }: { articles: NewsArticle[] }) {
             className="flex-1"
           >
             <Link
-              href={`/news/${articles[currentIndex].slug}`}
+              href={"/news/" + articles[currentIndex].slug}
               className="text-white text-sm font-medium hover:underline line-clamp-1"
             >
               {articles[currentIndex].title}
@@ -70,15 +72,12 @@ function NewsTicker({ articles }: { articles: NewsArticle[] }) {
         </AnimatePresence>
       </div>
 
-      {/* Navigation dots */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
         {articles.slice(0, 4).map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            className={`w-1.5 h-1.5 rounded-full transition-all ${
-              idx === currentIndex ? "bg-white w-4" : "bg-white/40"
-            }`}
+            className={"w-1.5 h-1.5 rounded-full transition-all " + (idx === currentIndex ? "bg-white w-4" : "bg-white/40")}
           />
         ))}
       </div>
@@ -106,6 +105,7 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
   };
 
   useEffect(() => {
+    if (articles.length === 0) return;
     const interval = setInterval(() => {
       setDirection(1);
       setActiveIndex((prev) => (prev + 1) % articles.length);
@@ -113,20 +113,17 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
     return () => clearInterval(interval);
   }, [articles.length]);
 
+  if (articles.length === 0) return null;
+
   return (
     <div className="relative h-[320px]">
-      {/* Navigation buttons */}
       <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={goUp}
           disabled={activeIndex === 0}
-          className={`p-2 rounded-full transition-all ${
-            activeIndex === 0
-              ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
-              : "bg-red-600 text-white hover:bg-red-500"
-          }`}
+          className={"p-2 rounded-full transition-all " + (activeIndex === 0 ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-500")}
         >
           <ChevronUp className="w-4 h-4" />
         </motion.button>
@@ -135,17 +132,12 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
           whileTap={{ scale: 0.9 }}
           onClick={goDown}
           disabled={activeIndex === articles.length - 1}
-          className={`p-2 rounded-full transition-all ${
-            activeIndex === articles.length - 1
-              ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
-              : "bg-red-600 text-white hover:bg-red-500"
-          }`}
+          className={"p-2 rounded-full transition-all " + (activeIndex === articles.length - 1 ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-500")}
         >
           <ChevronDown className="w-4 h-4" />
         </motion.button>
       </div>
 
-      {/* Stacked cards */}
       <div className="relative h-full perspective-1000">
         <AnimatePresence mode="popLayout" custom={direction}>
           {articles.map((article, idx) => {
@@ -158,11 +150,7 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
               <motion.div
                 key={article.id}
                 custom={direction}
-                initial={{
-                  y: direction > 0 ? 100 : -100,
-                  opacity: 0,
-                  scale: 0.8,
-                }}
+                initial={{ y: direction > 0 ? 100 : -100, opacity: 0, scale: 0.8 }}
                 animate={{
                   y: offset * 8,
                   opacity: offset === 0 ? 1 : 0.3 - Math.abs(offset) * 0.1,
@@ -170,63 +158,38 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
                   zIndex: articles.length - Math.abs(offset),
                   rotateX: offset * -2,
                 }}
-                exit={{
-                  y: direction > 0 ? -100 : 100,
-                  opacity: 0,
-                  scale: 0.8,
-                }}
+                exit={{ y: direction > 0 ? -100 : 100, opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="absolute inset-0 origin-center"
                 style={{ transformStyle: "preserve-3d" }}
               >
-                <Link href={`/news/${article.slug}`} className="block h-full">
-                  <div
-                    className={`h-full rounded-2xl overflow-hidden border transition-all ${
-                      offset === 0
-                        ? "border-red-500/30 shadow-xl shadow-red-500/10"
-                        : "border-zinc-800/50"
-                    }`}
-                  >
-                    {/* Image section */}
+                <Link href={"/news/" + article.slug} className="block h-full">
+                  <div className={"h-full rounded-2xl overflow-hidden border transition-all " + (offset === 0 ? "border-red-500/30 shadow-xl shadow-red-500/10" : "border-zinc-800/50")}>
                     <div className="relative h-48 overflow-hidden">
                       {article.image_url ? (
-                        <Image
-                          src={article.image_url}
-                          alt={article.title}
-                          fill
-                          className="object-cover"
-                          sizes="400px"
-                        />
+                        <Image src={article.image_url} alt={article.title} fill className="object-cover" sizes="400px" />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center">
                           <Newspaper className="w-12 h-12 text-zinc-700" />
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
-
-                      {/* Category badge */}
                       {article.category && (
                         <span className="absolute top-3 left-3 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded uppercase">
                           {article.category}
                         </span>
                       )}
                     </div>
-
-                    {/* Content */}
                     <div className="p-4 bg-zinc-900">
                       <h3 className="text-white font-bold text-lg mb-2 line-clamp-2 group-hover:text-red-400 transition-colors">
                         {article.title}
                       </h3>
                       {article.excerpt && (
-                        <p className="text-zinc-400 text-sm line-clamp-2 mb-3">
-                          {article.excerpt}
-                        </p>
+                        <p className="text-zinc-400 text-sm line-clamp-2 mb-3">{article.excerpt}</p>
                       )}
                       <div className="flex items-center gap-2 text-zinc-500 text-xs">
                         <Clock className="w-3 h-3" />
-                        <span>
-                          {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
-                        </span>
+                        <span>{formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}</span>
                       </div>
                     </div>
                   </div>
@@ -237,12 +200,11 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
         </AnimatePresence>
       </div>
 
-      {/* Progress indicator */}
       <div className="absolute bottom-0 left-0 right-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
         <motion.div
           className="h-full bg-gradient-to-r from-red-600 to-orange-500"
           initial={{ width: 0 }}
-          animate={{ width: `${((activeIndex + 1) / articles.length) * 100}%` }}
+          animate={{ width: ((activeIndex + 1) / articles.length) * 100 + "%" }}
           transition={{ duration: 0.3 }}
         />
       </div>
@@ -250,12 +212,12 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
   );
 }
 
-// Mini news list
+// Mini news list WITH THUMBNAILS
 function MiniNewsList({ articles }: { articles: NewsArticle[] }) {
   return (
     <div className="space-y-3">
       {articles.map((article, idx) => (
-        <Link key={article.id} href={`/news/${article.slug}`}>
+        <Link key={article.id} href={"/news/" + article.slug}>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -263,9 +225,19 @@ function MiniNewsList({ articles }: { articles: NewsArticle[] }) {
             whileHover={{ x: 5, backgroundColor: "rgba(239,68,68,0.1)" }}
             className="group flex gap-3 p-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-red-500/30 transition-all"
           >
-            {/* Number badge */}
-            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
-              <span className="text-white text-sm font-bold">{idx + 1}</span>
+            {/* Thumbnail with number badge */}
+            <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden relative">
+              {article.image_url ? (
+                <Image src={article.image_url} alt={article.title} fill className="object-cover" sizes="64px" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center">
+                  <Newspaper className="w-6 h-6 text-zinc-700" />
+                </div>
+              )}
+              {/* Number badge overlay */}
+              <div className="absolute top-0 left-0 w-6 h-6 rounded-br-lg bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
+                <span className="text-white text-xs font-bold">{idx + 1}</span>
+              </div>
             </div>
 
             {/* Content */}
@@ -275,18 +247,12 @@ function MiniNewsList({ articles }: { articles: NewsArticle[] }) {
               </h4>
               <div className="flex items-center gap-2 mt-1 text-zinc-500 text-xs">
                 <Clock className="w-3 h-3" />
-                <span>
-                  {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
-                </span>
+                <span>{formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}</span>
               </div>
             </div>
 
             {/* Arrow */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              className="self-center"
-            >
+            <motion.div initial={{ opacity: 0 }} whileHover={{ opacity: 1 }} className="self-center">
               <ArrowRight className="w-4 h-4 text-red-400" />
             </motion.div>
           </motion.div>
@@ -304,10 +270,8 @@ export function NewsSection({ articles }: NewsSectionProps) {
 
   return (
     <section className="mb-12">
-      {/* Header with unique design */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          {/* Animated icon container */}
           <motion.div
             animate={{
               boxShadow: [
@@ -335,19 +299,15 @@ export function NewsSection({ articles }: NewsSectionProps) {
         </Link>
       </div>
 
-      {/* Breaking News Ticker */}
       <div className="mb-5">
         <NewsTicker articles={articles} />
       </div>
 
-      {/* Main Content - Unique Magazine Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: 3D Vertical Stack */}
         <div className="lg:col-span-7">
           <VerticalNewsStack articles={featured} />
         </div>
 
-        {/* Right: Numbered List */}
         <div className="lg:col-span-5">
           <div className="mb-4">
             <h3 className="text-zinc-400 text-sm font-medium uppercase tracking-wider flex items-center gap-2">

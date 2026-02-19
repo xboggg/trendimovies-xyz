@@ -27,6 +27,7 @@ export const TMDB_CONFIG = {
 
 // Navigation Menu
 export const MAIN_NAV = [
+  { label: "Home", href: "/" },
   {
     label: "Movies",
     href: "/movies",

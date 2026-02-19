@@ -18,7 +18,7 @@ const BASE_URL = TMDB_CONFIG.baseUrl;
 // Check if API key is available
 function checkApiKey(): void {
   if (!API_KEY) {
-    console.warn("TMDB_API_KEY is not set. Some features may not work.");
+    // console.warn("TMDB_API_KEY is not set. Some features may not work.");
   }
 }
 

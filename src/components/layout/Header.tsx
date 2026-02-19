@@ -9,6 +9,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  Home,
   Film,
   Tv,
   LayoutGrid,
@@ -79,13 +80,15 @@ export function Header() {
       router.push("/");
       router.refresh();
     } catch (error) {
-      console.error("Logout error:", error);
+      // console.error("Logout error:", error);
     }
   };
 
   const getIcon = (label: string) => {
     switch (label) {
-      case "Movies":
+      case "Home":
+      return <Home className="w-4 h-4" />;
+    case "Movies":
         return <Film className="w-4 h-4" />;
       case "TV Shows":
         return <Tv className="w-4 h-4" />;

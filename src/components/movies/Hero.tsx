@@ -51,7 +51,7 @@ export function Hero({ movies }: HeroProps) {
 
   return (
     <section
-      className="relative h-[85vh] min-h-[650px] max-h-[950px] overflow-hidden bg-black"
+      className="relative h-[70vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] min-h-[500px] sm:min-h-[550px] md:min-h-[600px] lg:min-h-[650px] max-h-[950px] overflow-hidden bg-black"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -71,13 +71,13 @@ export function Hero({ movies }: HeroProps) {
             src={getBackdropUrl(currentMovie.backdrop_path, "original")}
             alt={currentMovie.title}
             fill
-            className="object-cover"
+            className="object-cover object-center"
             priority
             sizes="100vw"
           />
-          {/* Cinematic gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent" />
+          {/* Cinematic gradient overlays - stronger on mobile for readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40 md:via-black/60 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent md:via-zinc-950/30" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
         </motion.div>
       </AnimatePresence>
@@ -89,17 +89,18 @@ export function Hero({ movies }: HeroProps) {
 
       {/* Content */}
       <div className="relative h-full container mx-auto px-4 flex items-center">
-        {/* Left Arrow - Inside container, positioned after content starts */}
+        {/* Left Arrow */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={goPrev}
-          className="absolute left-4 lg:left-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
+          aria-label="Previous slide"
+          className="absolute left-2 sm:left-4 lg:left-0 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </motion.button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full pl-16 lg:pl-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 items-center w-full px-8 sm:px-12 lg:pl-12 lg:pr-0">
           {/* Left: Info */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -115,9 +116,9 @@ export function Hero({ movies }: HeroProps) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex items-center gap-3 mb-4"
+                className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
               >
-                <span className="relative px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-full uppercase tracking-wider overflow-hidden">
+                <span className="relative px-3 sm:px-4 py-1 sm:py-1.5 bg-red-600 text-white text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider overflow-hidden">
                   <span className="relative z-10">Trending Now</span>
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -125,13 +126,13 @@ export function Hero({ movies }: HeroProps) {
                     transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                   />
                 </span>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-full">
-                  <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                  <span className="text-white font-bold text-sm">
+                <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-black/40 backdrop-blur-sm rounded-full">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-500 text-yellow-500" />
+                  <span className="text-white font-bold text-xs sm:text-sm">
                     {formatVoteAverage(currentMovie.vote_average)}
                   </span>
                 </div>
-                <span className="px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-full text-zinc-300 text-sm">
+                <span className="px-2 sm:px-3 py-1 sm:py-1.5 bg-black/40 backdrop-blur-sm rounded-full text-zinc-300 text-xs sm:text-sm">
                   {formatYear(currentMovie.release_date)}
                 </span>
               </motion.div>
@@ -141,7 +142,7 @@ export function Hero({ movies }: HeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 leading-[0.95] tracking-tight"
+                className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-2 sm:mb-4 leading-[1] sm:leading-[0.95] tracking-tight"
               >
                 {currentMovie.title}
               </motion.h1>
@@ -151,7 +152,7 @@ export function Hero({ movies }: HeroProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="text-zinc-300 text-base md:text-lg mb-8 line-clamp-3 leading-relaxed"
+                className="text-zinc-300 text-sm sm:text-base md:text-lg mb-4 sm:mb-6 md:mb-8 line-clamp-2 sm:line-clamp-3 leading-relaxed"
               >
                 {currentMovie.overview}
               </motion.p>
@@ -161,7 +162,7 @@ export function Hero({ movies }: HeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex items-center gap-4"
+                className="flex items-center gap-2 sm:gap-4"
               >
                 <a
                   href={`https://trendimovies.com/movie/${currentMovie.id}`}
@@ -171,27 +172,29 @@ export function Hero({ movies }: HeroProps) {
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(239,68,68,0.5)" }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-colors"
+                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-red-600 hover:bg-red-500 text-white text-sm sm:text-base font-bold rounded-lg sm:rounded-xl transition-colors"
                   >
-                    <Play className="w-5 h-5 fill-white" />
-                    Watch Now
+                    <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+                    <span className="hidden xs:inline">Watch Now</span>
+                    <span className="xs:hidden">Watch</span>
                   </motion.button>
                 </a>
                 <Link href={`/movies/${currentMovie.id}`}>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/20 transition-colors"
+                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl border border-white/20 transition-colors"
                   >
-                    <Info className="w-5 h-5" />
-                    More Info
+                    <Info className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="hidden sm:inline">More Info</span>
+                    <span className="sm:hidden">Info</span>
                   </motion.button>
                 </Link>
               </motion.div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Right: Poster Card (Desktop) */}
+          {/* Right: Poster Card (Desktop only) */}
           <div className="hidden lg:flex justify-end pr-12">
             <AnimatePresence mode="wait">
               <motion.div
@@ -225,30 +228,32 @@ export function Hero({ movies }: HeroProps) {
           </div>
         </div>
 
-        {/* Right Arrow - Inside container */}
+        {/* Right Arrow */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={goNext}
-          className="absolute right-4 lg:right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
+          aria-label="Next slide"
+          className="absolute right-2 sm:right-4 lg:right-0 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/10 text-white transition-colors"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </motion.button>
       </div>
 
       {/* Bottom: Thumbnail Navigation */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-        <div className="flex items-center gap-3 px-4 py-3 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2">
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 bg-black/40 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/10">
           {featuredMovies.map((movie, index) => (
             <motion.button
               key={movie.id}
               onClick={() => goToSlide(index, index > currentIndex ? 1 : -1)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative rounded-lg overflow-hidden transition-all duration-300 ${
+              aria-label={`Go to slide ${index + 1}`}
+              className={`relative rounded-md sm:rounded-lg overflow-hidden transition-all duration-300 ${
                 index === currentIndex
-                  ? "w-16 h-10 ring-2 ring-red-500"
-                  : "w-12 h-8 opacity-50 hover:opacity-80"
+                  ? "w-10 h-6 sm:w-14 md:w-16 sm:h-8 md:h-10 ring-2 ring-red-500"
+                  : "w-8 h-5 sm:w-10 md:w-12 sm:h-6 md:h-8 opacity-50 hover:opacity-80"
               }`}
             >
               <Image
@@ -272,8 +277,8 @@ export function Hero({ movies }: HeroProps) {
         </div>
       </div>
 
-      {/* Slide counter */}
-      <div className="absolute top-8 right-8 px-4 py-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/10">
+      {/* Slide counter - hidden on very small screens */}
+      <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 px-3 sm:px-4 py-1.5 sm:py-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/10 text-sm sm:text-base">
         <span className="text-white font-bold">{currentIndex + 1}</span>
         <span className="text-zinc-400 mx-1">/</span>
         <span className="text-zinc-400">{featuredMovies.length}</span>

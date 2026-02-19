@@ -51,7 +51,7 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
         setBattle(data);
       }
     } catch (error) {
-      console.error("Failed to fetch battle:", error);
+      // console.error("Failed to fetch battle:", error);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +82,7 @@ export function MovieBattle({ battle: initialBattle }: MovieBattleProps) {
         localStorage.setItem("votedBattles", JSON.stringify(votedBattles));
       }
     } catch (error) {
-      console.error("Failed to vote:", error);
+      // console.error("Failed to vote:", error);
       setVotedFor(null);
     } finally {
       setIsVoting(false);

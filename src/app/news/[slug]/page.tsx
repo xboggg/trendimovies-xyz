@@ -6,9 +6,42 @@ import { Calendar, Clock, ArrowLeft, ExternalLink } from "lucide-react";
 import { supabase, NewsArticle } from "@/lib/supabase";
 import ShareButtons from "@/components/ShareButtons";
 import PlaceholderImage from "@/components/PlaceholderImage";
+import sanitizeHtml from "sanitize-html";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+// Sanitize HTML content to prevent XSS attacks
+function sanitizeContent(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: [
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'p', 'br', 'hr',
+      'ul', 'ol', 'li',
+      'strong', 'b', 'em', 'i', 'u', 's',
+      'blockquote', 'code', 'pre',
+      'a', 'img',
+      'table', 'thead', 'tbody', 'tr', 'th', 'td',
+      'div', 'span'
+    ],
+    allowedAttributes: {
+      'a': ['href', 'target', 'rel'],
+      'img': ['src', 'alt', 'width', 'height'],
+      '*': ['class']
+    },
+    allowedSchemes: ['http', 'https', 'mailto'],
+    transformTags: {
+      'a': (tagName, attribs) => ({
+        tagName,
+        attribs: {
+          ...attribs,
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }
+      })
+    }
+  });
 }
 
 async function getArticle(slug: string): Promise<NewsArticle | null> {
@@ -73,8 +106,10 @@ export default async function NewsArticlePage({ params }: Props) {
   }
 
   const relatedArticles = await getRelatedArticles(article.category, article.id);
-
   const readingTime = Math.ceil((article.content?.split(" ").length || 0) / 200);
+
+  // Sanitize content before rendering
+  const sanitizedContent = sanitizeContent(article.content || "");
 
   return (
     <main className="min-h-screen bg-zinc-950 pt-24 pb-16">
@@ -147,7 +182,7 @@ export default async function NewsArticlePage({ params }: Props) {
           </p>
         )}
 
-        {/* Content */}
+        {/* Content - SANITIZED */}
         <div
           className="prose prose-invert prose-lg max-w-none mb-12
             prose-p:text-zinc-300 prose-p:leading-relaxed prose-p:mb-6
@@ -155,7 +190,7 @@ export default async function NewsArticlePage({ params }: Props) {
             prose-strong:text-white prose-em:text-zinc-200
             prose-a:text-red-500 prose-a:no-underline hover:prose-a:underline
             [&>p]:mb-6 [&>p]:leading-8 [&>p]:text-lg"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         />
 
         {/* Tags */}

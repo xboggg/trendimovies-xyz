@@ -21,7 +21,7 @@ export async function GET() {
 
     return NextResponse.json(battle);
   } catch (error) {
-    console.error("Error fetching battle:", error);
+    // console.error("Error fetching battle:", error);
     return NextResponse.json({ error: "Failed to fetch battle" }, { status: 500 });
   }
 }

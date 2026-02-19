@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       filename,
     });
   } catch (error: any) {
-    console.error("Upload error:", error);
+    // console.error("Upload error:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Upload failed" },
       { status: 500 }

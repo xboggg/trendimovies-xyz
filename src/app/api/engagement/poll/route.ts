@@ -21,7 +21,7 @@ export async function GET() {
 
     return NextResponse.json(poll);
   } catch (error) {
-    console.error("Error fetching poll:", error);
+    // console.error("Error fetching poll:", error);
     return NextResponse.json({ error: "Failed to fetch poll" }, { status: 500 });
   }
 }

@@ -62,7 +62,7 @@ export function ThisDayInHistory({ events: initialEvents }: ThisDayInHistoryProp
         setEvents(data);
       }
     } catch (error) {
-      console.error("Failed to fetch history:", error);
+      // console.error("Failed to fetch history:", error);
     } finally {
       setIsLoading(false);
     }

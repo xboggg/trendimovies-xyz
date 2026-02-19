@@ -1,3 +1,7 @@
+import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+import { rateLimiters, getClientIp } from "@/lib/rate-limit";
+
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -60,7 +64,7 @@ async function fetchFromNewsAPI(limit: number): Promise<any[]> {
         provider: "newsapi"
       }));
   } catch (error) {
-    console.error("NewsAPI fetch error:", error);
+    // console.error("NewsAPI fetch error:", error);
     return [];
   }
 }
@@ -88,7 +92,7 @@ async function fetchFromGNews(limit: number): Promise<any[]> {
         provider: "gnews"
       }));
   } catch (error) {
-    console.error("GNews fetch error:", error);
+    // console.error("GNews fetch error:", error);
     return [];
   }
 }
@@ -136,7 +140,7 @@ Write 8-10 detailed paragraphs. Each paragraph wrapped in <p></p> tags. Include 
       if (attempt > 1) {
         await new Promise(resolve => setTimeout(resolve, 15000));
       }
-      console.log(`AI attempt ${attempt} for: ${title.substring(0, 40)}...`);
+      // console.log(`AI attempt ${attempt} for: ${title.substring(0, 40)}...`);
 
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
@@ -156,13 +160,13 @@ Write 8-10 detailed paragraphs. Each paragraph wrapped in <p></p> tags. Include 
       });
 
       if (!response.ok) {
-        console.error("Groq API error:", response.status);
+        // console.error("Groq API error:", response.status);
         continue;
       }
 
       const data = await response.json();
       const aiContent = data.choices?.[0]?.message?.content || "";
-      console.log("AI Response received, length:", aiContent.length);
+      // console.log("AI Response received, length:", aiContent.length);
 
       // First try direct JSON parse with cleaning
       const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
@@ -178,11 +182,11 @@ Write 8-10 detailed paragraphs. Each paragraph wrapped in <p></p> tags. Include 
             });
           const parsed = JSON.parse(cleanedJson);
           if (parsed.title && parsed.content && parsed.content.length > 500) {
-            console.log("SUCCESS via JSON.parse, content length:", parsed.content.length);
+            // console.log("SUCCESS via JSON.parse, content length:", parsed.content.length);
             return { title: parsed.title, content: parsed.content };
           }
         } catch (jsonErr) {
-          console.log("JSON.parse failed, trying manual extraction");
+          // console.log("JSON.parse failed, trying manual extraction");
         }
       }
 
@@ -223,17 +227,17 @@ Write 8-10 detailed paragraphs. Each paragraph wrapped in <p></p> tags. Include 
               .replace(/\n\s*\n/g, '\n')
               .trim();
 
-            console.log("Extracted title:", titleMatch[1].substring(0, 50));
-            console.log("Extracted content length:", extractedContent.length);
+            // console.log("Extracted title:", titleMatch[1].substring(0, 50));
+            // console.log("Extracted content length:", extractedContent.length);
 
             if (extractedContent.length > 500) {
-              console.log("SUCCESS via manual extraction");
+              // console.log("SUCCESS via manual extraction");
               return { title: titleMatch[1], content: extractedContent };
             } else {
-              console.log("Manual extraction content too short:", extractedContent.length);
+              // console.log("Manual extraction content too short:", extractedContent.length);
             }
           } else {
-            console.log("Could not find valid close index, closeIdx:", closeIdx, "openQuoteIdx:", openQuoteIdx);
+            // console.log("Could not find valid close index, closeIdx:", closeIdx, "openQuoteIdx:", openQuoteIdx);
           }
         }
       }
@@ -244,22 +248,23 @@ Write 8-10 detailed paragraphs. Each paragraph wrapped in <p></p> tags. Include 
         const combinedContent = allParagraphs.join('\n');
         if (combinedContent.length > 500) {
           const fallbackTitle = titleMatch ? titleMatch[1] : title;
-          console.log("SUCCESS via paragraph extraction, found", allParagraphs.length, "paragraphs");
+          // console.log("SUCCESS via paragraph extraction, found", allParagraphs.length, "paragraphs");
           return { title: fallbackTitle, content: combinedContent };
         }
       }
-      console.log(`Attempt ${attempt} failed to extract content, retrying...`);
+      // console.log(`Attempt ${attempt} failed to extract content, retrying...`);
     } catch (error) {
-      console.error(`AI attempt ${attempt} error:`, error);
+      // console.error(`AI attempt ${attempt} error:`, error);
     }
   }
 
-  console.log("All 3 attempts failed, using original content");
+  // console.log("All 3 attempts failed, using original content");
   return { title, content: description };
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+// Authentication check - admin only  const cookieStore = await cookies();  const sessionCookie = cookieStore.get("user_session");  if (!sessionCookie) {    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });  }  try {    const session = JSON.parse(sessionCookie.value);    if (session.role !== "admin") {      return NextResponse.json({ error: "Admin access required" }, { status: 403 });    }  } catch {    return NextResponse.json({ error: "Invalid session" }, { status: 401 });  }  // Rate limiting  const clientIp = getClientIp(request);  const rateLimitResult = rateLimiters.newsFetch(clientIp);  if (!rateLimitResult.success) {    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });  }
     const { count = 10 } = await request.json().catch(() => ({}));
     const articlesPerSource = Math.ceil(count / 2);
 
@@ -268,7 +273,7 @@ export async function POST(request: Request) {
       fetchFromGNews(articlesPerSource)
     ]);
 
-    console.log(`Fetched ${newsApiArticles.length} from NewsAPI, ${gnewsArticles.length} from GNews`);
+    // console.log(`Fetched ${newsApiArticles.length} from NewsAPI, ${gnewsArticles.length} from GNews`);
 
     const allArticles = [...newsApiArticles, ...gnewsArticles];
     const uniqueArticles: any[] = [];
@@ -295,7 +300,7 @@ export async function POST(request: Request) {
       if (uniqueArticles.length >= count) break;
     }
 
-    console.log(`${uniqueArticles.length} unique articles after deduplication`);
+    // console.log(`${uniqueArticles.length} unique articles after deduplication`);
 
     const savedArticles = [];
     for (let i = 0; i < uniqueArticles.length; i++) {
@@ -329,7 +334,7 @@ export async function POST(request: Request) {
         .single();
 
       if (error) {
-        console.error("Error saving article:", error);
+        // console.error("Error saving article:", error);
         continue;
       }
       savedArticles.push(data);
@@ -342,7 +347,7 @@ export async function POST(request: Request) {
       sources: { newsapi: newsApiArticles.length, gnews: gnewsArticles.length }
     });
   } catch (error) {
-    console.error("News fetch error:", error);
+    // console.error("News fetch error:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch news" }, { status: 500 });
   }
 }

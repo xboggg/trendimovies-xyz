@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { rateLimiters, getClientIp } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const clientIp = getClientIp(request);
+    const rateLimitResult = rateLimiters.register(clientIp);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many registration attempts. Please try again later.",
+          retryAfter: Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)),
+          }
+        }
+      );
+    }
+
     const { name, email, password } = await request.json();
 
     if (!name || !email || !password) {
@@ -13,12 +34,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid email format" },
+        { status: 400 }
+      );
+    }
+
+    // Validate password strength
     if (password.length < 8) {
       return NextResponse.json(
         { success: false, error: "Password must be at least 8 characters" },
         { status: 400 }
       );
     }
+
+    // Sanitize name input
+    const sanitizedName = name.trim().slice(0, 100);
 
     // Check if user already exists
     const { data: existingUser } = await supabase
@@ -34,24 +68,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    // Hash password with stronger cost factor
+    const passwordHash = await bcrypt.hash(password, 12);
 
     // Create user
-    const { data: newUser, error } = await supabase
+    const { error } = await supabase
       .from("users")
       .insert({
-        name,
-        email: email.toLowerCase(),
+        name: sanitizedName,
+        email: email.toLowerCase().trim(),
         password_hash: passwordHash,
-        role: "user", // Default role
+        role: "user",
         status: "active",
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating user:", error);
       return NextResponse.json(
         { success: false, error: "Failed to create account" },
         { status: 500 }
@@ -62,8 +95,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Account created successfully",
     });
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

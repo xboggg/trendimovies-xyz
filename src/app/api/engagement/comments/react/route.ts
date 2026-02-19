@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       dislikes: Math.max(0, newDislikes),
     });
   } catch (error) {
-    console.error("Error reacting:", error);
+    // console.error("Error reacting:", error);
     return NextResponse.json({ error: "Failed to react" }, { status: 500 });
   }
 }

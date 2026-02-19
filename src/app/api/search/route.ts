@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const data = await searchMulti(query, parseInt(page));
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Search error:", error);
+    // console.error("Search error:", error);
     return NextResponse.json(
       { error: "Failed to search" },
       { status: 500 }

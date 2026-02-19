@@ -31,7 +31,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, lists });
   } catch (error: any) {
-    console.error("Error fetching lists:", error);
+    // console.error("Error fetching lists:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, list: newList });
   } catch (error: any) {
-    console.error("Error creating list:", error);
+    // console.error("Error creating list:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

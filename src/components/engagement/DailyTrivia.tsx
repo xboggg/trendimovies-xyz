@@ -64,7 +64,7 @@ export function DailyTrivia({ questions: initialQuestions, compact = false }: Da
         setQuestions(data);
       }
     } catch (error) {
-      console.error("Failed to fetch trivia:", error);
+      // console.error("Failed to fetch trivia:", error);
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +125,7 @@ export function DailyTrivia({ questions: initialQuestions, compact = false }: Da
         <p className="text-zinc-400 text-sm mb-4">
           {hasPlayed
             ? `You scored ${score}/5 today! Come back tomorrow for a new quiz.`
-            : "5 questions. How well do you know movies?"}
+            : "10 questions. How well do you know movies?"}
         </p>
 
         <Link href="/trivia">

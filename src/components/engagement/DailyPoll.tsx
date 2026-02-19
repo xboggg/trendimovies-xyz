@@ -54,7 +54,7 @@ export function DailyPoll({ poll: initialPoll }: DailyPollProps) {
         setPoll(data);
       }
     } catch (error) {
-      console.error("Failed to fetch poll:", error);
+      // console.error("Failed to fetch poll:", error);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +87,7 @@ export function DailyPoll({ poll: initialPoll }: DailyPollProps) {
         localStorage.setItem("votedPolls", JSON.stringify(votedPolls));
       }
     } catch (error) {
-      console.error("Failed to vote:", error);
+      // console.error("Failed to vote:", error);
       setSelectedOption(null);
     } finally {
       setIsVoting(false);

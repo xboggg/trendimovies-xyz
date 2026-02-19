@@ -33,13 +33,13 @@ async function getNews(page: number): Promise<{ articles: NewsArticle[]; totalCo
       .range(from, to);
 
     if (error) {
-      console.error("Error fetching news:", error);
+      // console.error("Error fetching news:", error);
       return { articles: [], totalCount: 0 };
     }
 
     return { articles: data || [], totalCount: count || 0 };
   } catch (err) {
-    console.error("News fetch error:", err);
+    // console.error("News fetch error:", err);
     return { articles: [], totalCount: 0 };
   }
 }

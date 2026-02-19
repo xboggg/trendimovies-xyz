@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Newsletter subscription error:", error);
+      // console.error("Newsletter subscription error:", error);
       return NextResponse.json(
         { error: "Failed to subscribe. Please try again." },
         { status: 500 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       message: "Successfully subscribed to the newsletter!",
     });
   } catch (error) {
-    console.error("Newsletter API error:", error);
+    // console.error("Newsletter API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

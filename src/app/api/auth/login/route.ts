@@ -1,9 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { rateLimiters, getClientIp } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const clientIp = getClientIp(request);
+    const rateLimitResult = rateLimiters.login(clientIp);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many login attempts. Please try again later.",
+          retryAfter: Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)),
+            "X-RateLimit-Remaining": "0"
+          }
+        }
+      );
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
@@ -50,6 +73,9 @@ export async function POST(request: NextRequest) {
       .update({ last_login: new Date().toISOString() })
       .eq("id", user.id);
 
+    // Generate session token for additional security
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+
     // Create session cookie
     const response = NextResponse.json({
       success: true,
@@ -61,21 +87,23 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie with stronger security
     response.cookies.set("user_session", JSON.stringify({
       id: user.id,
       email: user.email,
       role: user.role,
+      token: sessionToken,
+      createdAt: Date.now(),
     }), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      secure: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24, // 24 hours (reduced from 7 days)
+      path: "/",
     });
 
     return response;
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

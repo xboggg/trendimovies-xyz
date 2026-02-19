@@ -21,7 +21,7 @@ async function getFranchises(): Promise<Franchise[]> {
     .order("name");
 
   if (error) {
-    console.error("Error fetching franchises:", error);
+    // console.error("Error fetching franchises:", error);
     return [];
   }
 

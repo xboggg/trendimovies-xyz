@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(updatedBattle);
   } catch (error) {
-    console.error("Error voting:", error);
+    // console.error("Error voting:", error);
     return NextResponse.json({ error: "Failed to submit vote" }, { status: 500 });
   }
 }

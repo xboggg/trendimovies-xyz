@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       distribution,
     });
   } catch (error) {
-    console.error("Ratings GET error:", error);
+    // console.error("Ratings GET error:", error);
     return NextResponse.json(
       { error: "Failed to fetch ratings" },
       { status: 500 }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       voterId,
     });
   } catch (error) {
-    console.error("Ratings POST error:", error);
+    // console.error("Ratings POST error:", error);
     return NextResponse.json(
       { error: "Failed to submit rating" },
       { status: 500 }

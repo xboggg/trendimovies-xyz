@@ -28,7 +28,7 @@ export async function GET() {
 
     return NextResponse.json(todayEvents);
   } catch (error) {
-    console.error("Error fetching history:", error);
+    // console.error("Error fetching history:", error);
     return NextResponse.json({ error: "Failed to fetch history" }, { status: 500 });
   }
 }
