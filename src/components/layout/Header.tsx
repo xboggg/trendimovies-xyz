@@ -19,13 +19,16 @@ import {
   Bookmark,
   LogOut,
   Settings,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MAIN_NAV } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { SearchModal } from "./SearchModal";
+import { useTheme } from "@/contexts/ThemeContext";
 
-interface User {
+interface UserType {
   id: string;
   email: string;
   name: string;
@@ -38,10 +41,11 @@ export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpandedMenu, setMobileExpandedMenu] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +63,6 @@ export function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    // Check if user is logged in
     fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
@@ -67,9 +70,7 @@ export function Header() {
           setUser(data.user);
         }
       })
-      .catch(() => {
-        // User not logged in
-      });
+      .catch(() => {});
   }, []);
 
   const handleLogout = async () => {
@@ -79,16 +80,14 @@ export function Header() {
       setUserMenuOpen(false);
       router.push("/");
       router.refresh();
-    } catch (error) {
-      // console.error("Logout error:", error);
-    }
+    } catch (error) {}
   };
 
   const getIcon = (label: string) => {
     switch (label) {
       case "Home":
-      return <Home className="w-4 h-4" />;
-    case "Movies":
+        return <Home className="w-4 h-4" />;
+      case "Movies":
         return <Film className="w-4 h-4" />;
       case "TV Shows":
         return <Tv className="w-4 h-4" />;
@@ -109,8 +108,8 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled
-            ? "bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800"
-            : "bg-gradient-to-b from-black/80 to-transparent"
+            ? "header-bg backdrop-blur-md border-b border-theme"
+            : "header-transparent"
         )}
       >
         <div className="container mx-auto px-4">
@@ -121,7 +120,7 @@ export function Header() {
               className="flex items-center gap-2 text-xl md:text-2xl font-bold"
             >
               <span className="text-red-600">Trendi</span>
-              <span className="text-white">Movies</span>
+              <span className="text-theme">Movies</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -139,7 +138,7 @@ export function Header() {
                       "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                       pathname.startsWith(item.href)
                         ? "text-red-500"
-                        : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                        : "text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
                     )}
                   >
                     {getIcon(item.label)}
@@ -157,12 +156,12 @@ export function Header() {
                   {/* Dropdown */}
                   {item.children && openDropdown === item.label && (
                     <div className="absolute top-full left-0 pt-2">
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 min-w-[180px] shadow-xl">
+                      <div className="bg-theme-secondary border border-theme rounded-xl p-2 min-w-[180px] shadow-xl">
                         {item.children.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-4 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                            className="block px-4 py-2 text-sm text-theme-secondary hover:text-theme hover:bg-theme-tertiary rounded-lg transition-colors"
                           >
                             {child.label}
                           </Link>
@@ -176,17 +175,32 @@ export function Header() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-theme-secondary hover:text-theme"
+                title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsSearchOpen(true)}
-                className="text-zinc-300 hover:text-white"
+                className="text-theme-secondary hover:text-theme"
               >
                 <Search className="w-5 h-5" />
               </Button>
 
               <Link href="/watchlist" className="hidden md:block">
-                <Button variant="ghost" size="icon" className="text-zinc-300 hover:text-white">
+                <Button variant="ghost" size="icon" className="text-theme-secondary hover:text-theme">
                   <Bookmark className="w-5 h-5" />
                 </Button>
               </Link>
@@ -205,11 +219,11 @@ export function Header() {
                   </Button>
 
                   {userMenuOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-xl z-50">
+                    <div className="absolute top-full right-0 mt-2 w-48 bg-theme-secondary border border-theme rounded-xl p-2 shadow-xl z-50">
                       {user.role === "admin" && (
                         <Link
                           href="/admin"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-theme-secondary hover:text-theme hover:bg-theme-tertiary rounded-lg transition-colors"
                         >
                           <Settings className="w-4 h-4" />
                           Admin Panel
@@ -217,7 +231,7 @@ export function Header() {
                       )}
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-theme-secondary hover:text-theme hover:bg-theme-tertiary rounded-lg transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -238,7 +252,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden text-zinc-300 hover:text-white"
+                className="lg:hidden text-theme-secondary hover:text-theme"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? (
@@ -250,7 +264,6 @@ export function Header() {
             </div>
           </div>
         </div>
-
       </header>
 
       {/* Mobile Menu Overlay */}
@@ -264,24 +277,38 @@ export function Header() {
       {/* Mobile Menu Slide-in */}
       <div
         className={cn(
-          "lg:hidden fixed top-0 right-0 z-50 h-full w-[280px] max-w-[80vw] bg-zinc-950 border-l border-zinc-800 transform transition-transform duration-300 ease-in-out overflow-y-auto",
+          "lg:hidden fixed top-0 right-0 z-50 h-full w-[280px] max-w-[80vw] bg-theme border-l border-theme transform transition-transform duration-300 ease-in-out overflow-y-auto",
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+        <div className="flex items-center justify-between p-4 border-b border-theme">
           <span className="text-lg font-bold">
             <span className="text-red-600">Trendi</span>
-            <span className="text-white">Movies</span>
+            <span className="text-theme">Movies</span>
           </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-zinc-300 hover:text-white"
-          >
-            <X className="w-6 h-6" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="text-theme-secondary hover:text-theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-theme-secondary hover:text-theme"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+          </div>
         </div>
 
         <nav className="p-4 space-y-1 pb-24">
@@ -295,7 +322,7 @@ export function Header() {
                       "flex items-center justify-between w-full px-4 py-3 rounded-lg text-base font-medium transition-colors",
                       pathname.startsWith(item.href)
                         ? "text-red-500 bg-red-500/10"
-                        : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                        : "text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
                     )}
                   >
                     <span className="flex items-center gap-3">
@@ -314,7 +341,7 @@ export function Header() {
                       <Link
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-red-400 hover:text-white transition-colors"
+                        className="block px-4 py-2 text-sm text-red-400 hover:text-theme transition-colors"
                       >
                         View All {item.label}
                       </Link>
@@ -323,7 +350,7 @@ export function Header() {
                           key={child.href}
                           href={child.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                          className="block px-4 py-2 text-sm text-theme-muted hover:text-theme transition-colors"
                         >
                           {child.label}
                         </Link>
@@ -339,7 +366,7 @@ export function Header() {
                     "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors",
                     pathname.startsWith(item.href)
                       ? "text-red-500 bg-red-500/10"
-                      : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                      : "text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
                   )}
                 >
                   {getIcon(item.label)}
@@ -349,11 +376,11 @@ export function Header() {
             </div>
           ))}
 
-          <div className="border-t border-zinc-800 pt-4 mt-4 space-y-2">
+          <div className="border-t border-theme pt-4 mt-4 space-y-2">
             <Link
               href="/watchlist"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
             >
               <Bookmark className="w-5 h-5" />
               Watchlist
@@ -365,7 +392,7 @@ export function Header() {
                   <Link
                     href="/admin"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
                   >
                     <Settings className="w-5 h-5" />
                     Admin Panel
@@ -376,7 +403,7 @@ export function Header() {
                     handleLogout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 w-full text-left"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-theme-secondary hover:text-theme hover:bg-theme-tertiary w-full text-left"
                 >
                   <LogOut className="w-5 h-5" />
                   Sign Out ({user.name})
@@ -386,7 +413,7 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-theme-secondary hover:text-theme hover:bg-theme-tertiary"
               >
                 <User className="w-5 h-5" />
                 Sign In
