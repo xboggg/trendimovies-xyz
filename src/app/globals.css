@@ -20,28 +20,32 @@
   --shadow: rgba(0, 0, 0, 0.3);
   --scrollbar-thumb: #3f3f46;
   --scrollbar-thumb-hover: #52525b;
+  --input-bg: #27272a;
+  --input-border: #3f3f46;
 }
 
 /* Light theme */
 :root.light {
-  --background: #ffffff;
-  --background-secondary: #f4f4f5;
-  --background-tertiary: #e4e4e7;
-  --foreground: #09090b;
-  --foreground-secondary: #52525b;
-  --foreground-muted: #71717a;
-  --border: #e4e4e7;
-  --border-light: #d4d4d8;
+  --background: #f8fafc;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f1f5f9;
+  --foreground: #0f172a;
+  --foreground-secondary: #475569;
+  --foreground-muted: #64748b;
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
   --card: #ffffff;
-  --card-hover: #f4f4f5;
+  --card-hover: #f8fafc;
   --accent: #dc2626;
   --accent-hover: #b91c1c;
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-transparent: rgba(255, 255, 255, 0.8);
-  --shadow: rgba(0, 0, 0, 0.1);
-  --scrollbar-thumb: #d4d4d8;
-  --scrollbar-thumb-hover: #a1a1aa;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --header-bg: rgba(255, 255, 255, 0.98);
+  --header-transparent: rgba(248, 250, 252, 0.9);
+  --shadow: rgba(0, 0, 0, 0.08);
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  --input-bg: #ffffff;
+  --input-border: #e2e8f0;
 }
 
 @theme inline {
@@ -159,6 +163,33 @@ html {
   background: linear-gradient(to bottom, var(--header-transparent), transparent);
 }
 
+/* Card styling */
+.theme-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+}
+
+.theme-card:hover {
+  background-color: var(--card-hover);
+}
+
+/* Input styling */
+.theme-input {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--foreground);
+}
+
+.theme-input::placeholder {
+  color: var(--foreground-muted);
+}
+
+.theme-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
 /* Animations */
 @keyframes fade-in {
   from { opacity: 0; }
@@ -220,27 +251,93 @@ html {
   animation: slide-glow 3s ease-in-out infinite;
 }
 
-/* Theme transition for smooth switching */
-.theme-transition,
-.theme-transition *,
-.theme-transition *::before,
-.theme-transition *::after {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
-}
-
-/* Light theme specific overrides */
-:root.light .gradient-text {
-  background: linear-gradient(135deg, #dc2626, #ea580c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Card shadows for light mode */
+/* Light theme specific card shadow */
 :root.light .card-shadow {
   box-shadow: 0 1px 3px var(--shadow), 0 1px 2px var(--shadow);
 }
 
 :root.light .card-shadow-lg {
-  box-shadow: 0 10px 15px -3px var(--shadow), 0 4px 6px -2px var(--shadow);
+  box-shadow: 0 4px 6px -1px var(--shadow), 0 2px 4px -1px var(--shadow);
+}
+
+/* Override hardcoded zinc colors for light theme */
+:root.light .bg-zinc-900,
+:root.light .bg-zinc-950 {
+  background-color: var(--card) !important;
+}
+
+:root.light .bg-zinc-800 {
+  background-color: var(--background-tertiary) !important;
+}
+
+:root.light .text-white {
+  color: var(--foreground) !important;
+}
+
+:root.light .text-zinc-100,
+:root.light .text-zinc-200 {
+  color: var(--foreground) !important;
+}
+
+:root.light .text-zinc-300,
+:root.light .text-zinc-400 {
+  color: var(--foreground-secondary) !important;
+}
+
+:root.light .text-zinc-500 {
+  color: var(--foreground-muted) !important;
+}
+
+:root.light .border-zinc-700,
+:root.light .border-zinc-800 {
+  border-color: var(--border) !important;
+}
+
+:root.light .hover\:bg-zinc-800:hover {
+  background-color: var(--background-tertiary) !important;
+}
+
+:root.light .hover\:text-white:hover {
+  color: var(--foreground) !important;
+}
+
+/* Fix movie/show card backgrounds in light mode */
+:root.light .bg-gradient-to-t {
+  background: linear-gradient(to top, var(--card), transparent) !important;
+}
+
+/* Fix input fields in light mode */
+:root.light input,
+:root.light textarea,
+:root.light select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--foreground);
+}
+
+:root.light input::placeholder,
+:root.light textarea::placeholder {
+  color: var(--foreground-muted);
+}
+
+/* Fix buttons in light mode */
+:root.light .bg-zinc-800\/80,
+:root.light .bg-zinc-900\/80 {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+/* Newsletter and engagement cards */
+:root.light .bg-gradient-to-br {
+  background: var(--card) !important;
+}
+
+/* Fix footer */
+:root.light footer {
+  background-color: var(--background-secondary);
+  border-color: var(--border);
+}
+
+/* Max width container constraint */
+.container {
+  max-width: 1400px !important;
 }

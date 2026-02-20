@@ -84,9 +84,11 @@ export default function RootLayout({
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <ThemeProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <div className="max-w-[1600px] mx-auto">
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>

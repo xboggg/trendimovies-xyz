@@ -51,15 +51,15 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-theme-secondary border-t border-theme">
+    <footer style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border)' }} className="border-t">
       <div className="container mx-auto px-4 max-w-7xl py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 text-2xl font-bold mb-4">
               <span className="text-red-600">Trendi</span>
-              <span className="text-theme">Movies</span>
+              <span style={{ color: 'var(--foreground)' }}>Movies</span>
             </Link>
-            <p className="text-theme-muted text-sm mb-6 max-w-md">
+            <p style={{ color: 'var(--foreground-muted)' }} className="text-sm mb-6 max-w-md">
               Your daily dose of movies, TV shows, trailers, and entertainment news.
             </p>
             <div className="flex items-center gap-3">
@@ -69,7 +69,8 @@ export function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-theme-tertiary flex items-center justify-center text-theme-muted hover:bg-red-600 hover:text-white transition-all"
+                  style={{ backgroundColor: 'var(--background-tertiary)', color: 'var(--foreground-muted)' }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition-all"
                   title={social.name}
                 >
                   <social.icon />
@@ -79,11 +80,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-theme font-semibold mb-4">Discover</h3>
+            <h3 style={{ color: 'var(--foreground)' }} className="font-semibold mb-4">Discover</h3>
             <ul className="space-y-2">
               {FOOTER_LINKS.discover.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-theme-muted hover:text-red-500 text-sm transition-colors">
+                  <Link href={link.href} style={{ color: 'var(--foreground-muted)' }} className="hover:text-red-500 text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -92,11 +93,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-theme font-semibold mb-4">Company</h3>
+            <h3 style={{ color: 'var(--foreground)' }} className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
               {FOOTER_LINKS.company.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-theme-muted hover:text-red-500 text-sm transition-colors">
+                  <Link href={link.href} style={{ color: 'var(--foreground-muted)' }} className="hover:text-red-500 text-sm transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -105,17 +106,17 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-theme flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-theme-muted text-sm">
+        <div style={{ borderColor: 'var(--border)' }} className="mt-8 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
+          <p style={{ color: 'var(--foreground-muted)' }} className="text-sm">
             &copy; {currentYear} {SITE_CONFIG.name}. All rights reserved.
           </p>
-          <p className="text-theme-muted text-sm">
+          <p style={{ color: 'var(--foreground-muted)' }} className="text-sm">
             Designed by{" "}
             <a href="https://www.novastreamdigital.com" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-400">
               NovaStream
             </a>
           </p>
-          <div className="flex items-center gap-2 text-theme-muted text-sm">
+          <div style={{ color: 'var(--foreground-muted)' }} className="flex items-center gap-2 text-sm">
             <Film className="w-4 h-4" />
             <span>
               Data provided by{" "}
