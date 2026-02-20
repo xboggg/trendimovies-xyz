@@ -1,120 +1,85 @@
 @import "tailwindcss";
 
-/* ============================================
-   DARK THEME (DEFAULT)
-   ============================================ */
 :root {
-  --bg-primary: #09090b;
-  --bg-secondary: #18181b;
-  --bg-tertiary: #27272a;
-  --bg-card: #18181b;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --border-primary: #3f3f46;
-  --border-secondary: #52525b;
-  --accent: #ef4444;
-  --scrollbar-thumb: #3f3f46;
-  --scrollbar-thumb-hover: #52525b;
-  --fade-gradient: #09090b;
+  --background: #09090b;
+  --foreground: #fafafa;
 }
 
-/* ============================================
-   LIGHT THEME
-   ============================================ */
-:root.light {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
-  --bg-card: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-primary: #e2e8f0;
-  --border-secondary: #cbd5e1;
-  --accent: #dc2626;
-  --scrollbar-thumb: #cbd5e1;
-  --scrollbar-thumb-hover: #94a3b8;
-  --fade-gradient: #f8fafc;
-}
-
-/* ============================================
-   TAILWIND CONFIG
-   ============================================ */
 @theme inline {
-  --color-background: var(--bg-primary);
-  --color-foreground: var(--text-primary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-color: #3f3f46 transparent;
 }
 
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 4px; }
-*::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-.scrollbar-hide::-webkit-scrollbar { display: none; }
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #52525b;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-html { scroll-behavior: smooth; }
-*:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-::selection { background: var(--accent); color: white; }
-
-/* Max width constraint */
-.container { max-width: 1400px !important; }
-
-/* ============================================
-   THEME UTILITY CLASSES
-   ============================================ */
-.bg-theme { background-color: var(--bg-primary); }
-.bg-theme-secondary { background-color: var(--bg-secondary); }
-.bg-theme-tertiary { background-color: var(--bg-tertiary); }
-.bg-theme-card { background-color: var(--bg-card); }
-.text-theme { color: var(--text-primary); }
-.text-theme-secondary { color: var(--text-secondary); }
-.text-theme-muted { color: var(--text-muted); }
-.border-theme { border-color: var(--border-primary); }
-
-.glass {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+html {
+  scroll-behavior: smooth;
 }
 
-:root.light .glass {
-  background: rgba(255, 255, 255, 0.9);
+*:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
 }
 
-.header-bg { background: rgba(9, 9, 11, 0.95); }
-.header-transparent { background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent); }
+::selection {
+  background: #ef4444;
+  color: white;
+}
 
-:root.light .header-bg { background: rgba(255, 255, 255, 0.98); }
-:root.light .header-transparent { background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95), transparent); }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slide-glow { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-.animate-fade-in { animation: fade-in 0.5s ease-out; }
-.animate-slide-up { animation: slide-up 0.5s ease-out; }
-.animate-slide-glow { animation: slide-glow 3s ease-in-out infinite; }
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out;
+}
 
 .gradient-text {
   background: linear-gradient(135deg, #ef4444, #f97316);
@@ -123,383 +88,43 @@ html { scroll-behavior: smooth; }
   background-clip: text;
 }
 
-.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-/* ============================================
-   LIGHT THEME - HERO BANNER (KEEP DARK FOR READABILITY)
-   ============================================ */
-:root.light section.relative.h-\[70vh\] .text-white,
-:root.light section.relative.h-\[75vh\] .text-white,
-:root.light section.relative.h-\[80vh\] .text-white,
-:root.light section.relative.h-\[85vh\] .text-white,
-:root.light section[class*="min-h-"][class*="overflow-hidden"] .text-white {
-  color: #ffffff !important;
+.glass {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-:root.light section.relative.h-\[70vh\] .text-zinc-300,
-:root.light section.relative.h-\[75vh\] .text-zinc-300,
-:root.light section.relative.h-\[80vh\] .text-zinc-300,
-:root.light section.relative.h-\[85vh\] .text-zinc-300,
-:root.light section[class*="min-h-"][class*="overflow-hidden"] .text-zinc-300 {
-  color: #d4d4d8 !important;
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-:root.light section.relative.h-\[70vh\] .text-zinc-400,
-:root.light section[class*="min-h-"][class*="overflow-hidden"] .text-zinc-400 {
-  color: #a1a1aa !important;
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* ============================================
-   LIGHT THEME - SIDE FADE GRADIENTS (MAKE LIGHT)
-   ============================================ */
-:root.light .bg-gradient-to-r.from-zinc-950.to-transparent,
-:root.light .bg-gradient-to-l.from-zinc-950.to-transparent,
-:root.light [class*="bg-gradient-to-r"][class*="from-zinc-950"],
-:root.light [class*="bg-gradient-to-l"][class*="from-zinc-950"] {
-  --tw-gradient-from: var(--bg-secondary) !important;
-  --tw-gradient-to: transparent !important;
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* ============================================
-   LIGHT THEME - CIRCULAR SCROLL BUTTONS
-   ============================================ */
-:root.light button.rounded-full.border.bg-zinc-800,
-:root.light button[class*="rounded-full"][class*="border"][class*="bg-zinc-800"] {
-  background-color: var(--bg-card) !important;
-  border-color: var(--border-primary) !important;
-  color: var(--text-primary) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Animated glow divider */
+@keyframes slide-glow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
 }
 
-:root.light button.rounded-full.border.bg-zinc-900,
-:root.light button[class*="rounded-full"][class*="border"][class*="bg-zinc-900"] {
-  background-color: var(--bg-tertiary) !important;
-  border-color: var(--border-primary) !important;
-  color: var(--text-muted) !important;
-}
-
-:root.light button.rounded-full.border.bg-zinc-800:hover,
-:root.light button[class*="rounded-full"][class*="border"][class*="bg-zinc-800"]:hover {
-  background-color: #dc2626 !important;
-  border-color: #dc2626 !important;
-  color: #ffffff !important;
-}
-
-/* ============================================
-   LIGHT THEME - CARDS & CONTAINERS
-   ============================================ */
-:root.light .bg-zinc-900,
-:root.light .bg-zinc-950 {
-  background-color: var(--bg-card) !important;
-}
-
-:root.light .bg-zinc-900\/50,
-:root.light .bg-zinc-900\/80 {
-  background-color: rgba(248, 250, 252, 0.95) !important;
-}
-
-:root.light .bg-zinc-800 {
-  background-color: var(--bg-tertiary) !important;
-}
-
-:root.light .bg-zinc-800\/50,
-:root.light .bg-zinc-800\/80 {
-  background-color: rgba(241, 245, 249, 0.95) !important;
-}
-
-:root.light .bg-zinc-700,
-:root.light .bg-zinc-700\/30 {
-  background-color: #e2e8f0 !important;
-}
-
-/* ============================================
-   LIGHT THEME - TEXT COLORS (GENERAL)
-   ============================================ */
-:root.light h2.text-white,
-:root.light h2.text-xl.font-bold.text-white,
-:root.light .mb-5 h2.text-white,
-:root.light section h2.text-white {
-  color: var(--text-primary) !important;
-}
-
-:root.light .text-zinc-100,
-:root.light .text-zinc-200 {
-  color: var(--text-primary) !important;
-}
-
-:root.light .text-zinc-300 {
-  color: var(--text-secondary) !important;
-}
-
-:root.light .text-zinc-400 {
-  color: var(--text-secondary) !important;
-}
-
-:root.light .text-zinc-500,
-:root.light .text-zinc-600,
-:root.light .text-zinc-700 {
-  color: var(--text-muted) !important;
-}
-
-/* ============================================
-   LIGHT THEME - MOVIE CARD TITLES
-   ============================================ */
-:root.light .mt-3.text-white,
-:root.light h3.text-white.text-sm,
-:root.light h3.font-semibold.text-white {
-  color: var(--text-primary) !important;
-}
-
-:root.light .group-hover\:text-red-400:hover,
-:root.light .group:hover .group-hover\:text-red-400 {
-  color: #dc2626 !important;
-}
-
-/* ============================================
-   LIGHT THEME - BORDERS
-   ============================================ */
-:root.light .border-zinc-600,
-:root.light .border-zinc-700,
-:root.light .border-zinc-800,
-:root.light [class*="border-zinc-800"],
-:root.light [class*="border-zinc-700"] {
-  border-color: var(--border-primary) !important;
-}
-
-/* ============================================
-   LIGHT THEME - COUNTDOWN TIMER FIX
-   ============================================ */
-:root.light .bg-red-600\/90 {
-  background-color: rgba(220, 38, 38, 0.95) !important;
-}
-
-:root.light .bg-red-600\/90 *,
-:root.light .bg-red-600 * {
-  color: #ffffff !important;
-}
-
-/* Countdown units - keep dark for visibility */
-:root.light .bg-zinc-800\/90 {
-  background-color: rgba(30, 41, 59, 0.9) !important;
-}
-
-:root.light .bg-zinc-800\/90 * {
-  color: #ffffff !important;
-}
-
-:root.light .text-red-200 {
-  color: #fecaca !important;
-}
-
-/* ============================================
-   LIGHT THEME - NEWS SECTION
-   ============================================ */
-:root.light .bg-zinc-900.rounded-xl,
-:root.light .bg-zinc-900.rounded-2xl,
-:root.light div[class*="bg-zinc-900"][class*="rounded"] {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-/* ============================================
-   LIGHT THEME - MOVIE BATTLE & DAILY POLL
-   ============================================ */
-:root.light [class*="from-zinc-900"][class*="via-zinc-900"][class*="to-zinc-900"],
-:root.light .bg-gradient-to-b.from-zinc-900 {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-primary);
-}
-
-:root.light .bg-zinc-800.border-zinc-700:hover {
-  background-color: var(--bg-tertiary) !important;
-}
-
-:root.light .bg-zinc-800\/50.border-zinc-700 {
-  background-color: var(--bg-tertiary) !important;
-  border-color: var(--border-primary) !important;
-}
-
-/* ============================================
-   LIGHT THEME - TRIVIA & HISTORY CARDS
-   ============================================ */
-:root.light .from-purple-900\/50 {
-  --tw-gradient-from: rgba(147, 51, 234, 0.08) !important;
-}
-
-:root.light .to-zinc-900 {
-  --tw-gradient-to: var(--bg-card) !important;
-}
-
-:root.light .bg-purple-500\/20 {
-  background-color: rgba(147, 51, 234, 0.1) !important;
-}
-
-:root.light .text-purple-400 {
-  color: #7c3aed !important;
-}
-
-:root.light .border-purple-500\/20 {
-  border-color: rgba(147, 51, 234, 0.2) !important;
-}
-
-:root.light .bg-gradient-to-r.from-purple-600.to-pink-600 {
-  background: linear-gradient(to right, #9333ea, #db2777) !important;
-}
-
-:root.light .bg-gradient-to-r.from-purple-600.to-pink-600 * {
-  color: #ffffff !important;
-}
-
-/* ============================================
-   LIGHT THEME - NEWSLETTER & SOCIAL FOLLOW
-   ============================================ */
-:root.light [class*="from-zinc-900\/80"][class*="via-zinc-900\/60"],
-:root.light .bg-gradient-to-br[class*="from-zinc-900"] {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-primary);
-}
-
-:root.light .via-zinc-600 {
-  --tw-gradient-via: #cbd5e1 !important;
-}
-
-:root.light [class*="from-red-600\/20"][class*="to-orange-600\/20"] {
-  background: linear-gradient(to bottom right, rgba(220, 38, 38, 0.05), rgba(234, 88, 12, 0.05)) !important;
-}
-
-/* ============================================
-   LIGHT THEME - INPUT FIELDS
-   ============================================ */
-:root.light input,
-:root.light textarea,
-:root.light select {
-  background-color: var(--bg-card) !important;
-  border-color: var(--border-primary) !important;
-  color: var(--text-primary) !important;
-}
-
-:root.light input::placeholder,
-:root.light textarea::placeholder {
-  color: var(--text-muted) !important;
-}
-
-/* ============================================
-   LIGHT THEME - FOOTER
-   ============================================ */
-:root.light footer {
-  background-color: var(--bg-secondary) !important;
-  border-color: var(--border-primary) !important;
-}
-
-:root.light footer .bg-zinc-800,
-:root.light footer [class*="bg-zinc-800"] {
-  background-color: var(--bg-tertiary) !important;
-}
-
-/* ============================================
-   LIGHT THEME - VIEW ALL BUTTONS
-   ============================================ */
-:root.light .bg-zinc-800\/50.text-zinc-300,
-:root.light a[class*="bg-zinc-800"][class*="text-zinc-300"] {
-  background-color: var(--bg-tertiary) !important;
-  color: var(--text-secondary) !important;
-  border: 1px solid var(--border-primary);
-}
-
-:root.light .bg-zinc-800\/50:hover,
-:root.light a[class*="bg-zinc-800"]:hover {
-  background-color: #dc2626 !important;
-  color: #ffffff !important;
-}
-
-/* ============================================
-   LIGHT THEME - CARD SHADOWS
-   ============================================ */
-:root.light .shadow-lg {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* ============================================
-   LIGHT THEME - KEEP RED BUTTONS RED
-   ============================================ */
-:root.light .bg-red-600,
-:root.light .bg-red-500 {
-  background-color: #dc2626 !important;
-}
-
-:root.light .bg-red-600 *,
-:root.light .bg-red-500 * {
-  color: #ffffff !important;
-}
-
-:root.light .text-red-400,
-:root.light .text-red-500 {
-  color: #dc2626 !important;
-}
-
-:root.light .bg-gradient-to-r.from-red-600.to-red-500 {
-  background: linear-gradient(to right, #dc2626, #ef4444) !important;
-}
-
-/* ============================================
-   LIGHT THEME - RATING BADGES (KEEP DARK)
-   ============================================ */
-:root.light .bg-black\/70,
-:root.light .bg-black\/70.backdrop-blur-sm {
-  background-color: rgba(0, 0, 0, 0.8) !important;
-}
-
-:root.light .bg-black\/70 * {
-  color: #ffffff !important;
-}
-
-:root.light .bg-black\/40 {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-}
-
-:root.light .bg-black\/40 * {
-  color: #ffffff !important;
-}
-
-/* ============================================
-   LIGHT THEME - GRADIENT OVERLAYS ON IMAGES (KEEP DARK)
-   ============================================ */
-:root.light .bg-gradient-to-t.from-black,
-:root.light .bg-gradient-to-t[class*="from-black"] {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4), transparent) !important;
-}
-
-:root.light .bg-gradient-to-t.from-black *,
-:root.light .bg-gradient-to-t[class*="from-black"] * {
-  color: #ffffff !important;
-}
-
-/* ============================================
-   LIGHT THEME - SKELETON LOADING
-   ============================================ */
-:root.light .animate-pulse .bg-zinc-800,
-:root.light .animate-pulse .bg-zinc-700 {
-  background-color: #e2e8f0 !important;
-}
-
-/* ============================================
-   LIGHT THEME - HOVER STATES
-   ============================================ */
-:root.light .hover\:bg-zinc-800:hover,
-:root.light .hover\:bg-zinc-700:hover {
-  background-color: var(--bg-tertiary) !important;
-}
-
-:root.light .hover\:text-white:hover {
-  color: var(--text-primary) !important;
-}
-
-/* ============================================
-   LIGHT THEME - WHITE TEXT IN CONTENT AREAS
-   ============================================ */
-:root.light main .text-white:not([class*="bg-black"] *):not([class*="bg-red-"] *):not([class*="bg-gradient-to-t"] *):not(section[class*="h-\["] *) {
-  color: var(--text-primary) !important;
+.animate-slide-glow {
+  animation: slide-glow 3s ease-in-out infinite;
 }

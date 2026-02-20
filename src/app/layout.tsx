@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header, Footer } from "@/components/layout";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
 
@@ -62,34 +61,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'light') {
-                    document.documentElement.classList.add('light');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
+    <html lang="en" className="dark">
       <body
-        className={`${inter.variable} font-sans antialiased min-h-screen`}
-        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+        className={`${inter.variable} font-sans antialiased bg-zinc-950 text-white min-h-screen`}
       >
-        <ThemeProvider>
-          <div className="max-w-[1600px] mx-auto">
-            <Header />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
       </body>
     </html>
   );
