@@ -1,68 +1,81 @@
 @import "tailwindcss";
 
-/* Dark theme (default) */
+/* ============================================
+   DARK THEME (DEFAULT)
+   ============================================ */
 :root {
-  --background: #09090b;
-  --background-secondary: #18181b;
-  --background-tertiary: #27272a;
-  --foreground: #fafafa;
-  --foreground-secondary: #a1a1aa;
-  --foreground-muted: #71717a;
-  --border: #3f3f46;
-  --border-light: #52525b;
-  --card: #18181b;
-  --card-hover: #27272a;
+  --bg-primary: #09090b;
+  --bg-secondary: #18181b;
+  --bg-tertiary: #27272a;
+  --bg-card: #18181b;
+  --bg-card-hover: #27272a;
+  --bg-input: #27272a;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  --border-primary: #3f3f46;
+  --border-secondary: #52525b;
+
   --accent: #ef4444;
   --accent-hover: #dc2626;
+
   --glass-bg: rgba(0, 0, 0, 0.5);
   --header-bg: rgba(9, 9, 11, 0.95);
   --header-transparent: rgba(0, 0, 0, 0.8);
   --shadow: rgba(0, 0, 0, 0.3);
   --scrollbar-thumb: #3f3f46;
   --scrollbar-thumb-hover: #52525b;
-  --input-bg: #27272a;
-  --input-border: #3f3f46;
+
+  --gradient-from: #18181b;
+  --gradient-to: #09090b;
 }
 
-/* Light theme */
+/* ============================================
+   LIGHT THEME
+   ============================================ */
 :root.light {
-  --background: #f8fafc;
-  --background-secondary: #ffffff;
-  --background-tertiary: #f1f5f9;
-  --foreground: #0f172a;
-  --foreground-secondary: #475569;
-  --foreground-muted: #64748b;
-  --border: #e2e8f0;
-  --border-light: #cbd5e1;
-  --card: #ffffff;
-  --card-hover: #f8fafc;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #ffffff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+
   --accent: #dc2626;
   --accent-hover: #b91c1c;
+
   --glass-bg: rgba(255, 255, 255, 0.9);
   --header-bg: rgba(255, 255, 255, 0.98);
   --header-transparent: rgba(248, 250, 252, 0.9);
   --shadow: rgba(0, 0, 0, 0.08);
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-thumb-hover: #94a3b8;
-  --input-bg: #ffffff;
-  --input-border: #e2e8f0;
+
+  --gradient-from: #f8fafc;
+  --gradient-to: #ffffff;
 }
 
+/* ============================================
+   TAILWIND THEME CONFIG
+   ============================================ */
 @theme inline {
-  --color-background: var(--background);
-  --color-background-secondary: var(--background-secondary);
-  --color-background-tertiary: var(--background-tertiary);
-  --color-foreground: var(--foreground);
-  --color-foreground-secondary: var(--foreground-secondary);
-  --color-foreground-muted: var(--foreground-muted);
-  --color-border: var(--border);
-  --color-card: var(--card);
-  --color-card-hover: var(--card-hover);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-inter);
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
@@ -96,8 +109,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -116,38 +129,24 @@ html {
   color: white;
 }
 
-/* Theme-aware utility classes */
-.bg-theme {
-  background-color: var(--background);
+/* ============================================
+   MAX WIDTH CONSTRAINT
+   ============================================ */
+.container {
+  max-width: 1400px !important;
 }
 
-.bg-theme-secondary {
-  background-color: var(--background-secondary);
-}
-
-.bg-theme-tertiary {
-  background-color: var(--background-tertiary);
-}
-
-.bg-theme-card {
-  background-color: var(--card);
-}
-
-.text-theme {
-  color: var(--foreground);
-}
-
-.text-theme-secondary {
-  color: var(--foreground-secondary);
-}
-
-.text-theme-muted {
-  color: var(--foreground-muted);
-}
-
-.border-theme {
-  border-color: var(--border);
-}
+/* ============================================
+   THEME UTILITY CLASSES
+   ============================================ */
+.bg-theme { background-color: var(--bg-primary); }
+.bg-theme-secondary { background-color: var(--bg-secondary); }
+.bg-theme-tertiary { background-color: var(--bg-tertiary); }
+.bg-theme-card { background-color: var(--bg-card); }
+.text-theme { color: var(--text-primary); }
+.text-theme-secondary { color: var(--text-secondary); }
+.text-theme-muted { color: var(--text-muted); }
+.border-theme { border-color: var(--border-primary); }
 
 .glass {
   background: var(--glass-bg);
@@ -155,42 +154,12 @@ html {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.header-bg {
-  background: var(--header-bg);
-}
+.header-bg { background: var(--header-bg); }
+.header-transparent { background: linear-gradient(to bottom, var(--header-transparent), transparent); }
 
-.header-transparent {
-  background: linear-gradient(to bottom, var(--header-transparent), transparent);
-}
-
-/* Card styling */
-.theme-card {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-}
-
-.theme-card:hover {
-  background-color: var(--card-hover);
-}
-
-/* Input styling */
-.theme-input {
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
-  color: var(--foreground);
-}
-
-.theme-input::placeholder {
-  color: var(--foreground-muted);
-}
-
-.theme-input:focus {
-  border-color: var(--accent);
-  outline: none;
-}
-
-/* Animations */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -201,13 +170,14 @@ html {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out;
+@keyframes slide-glow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
 }
 
-.animate-slide-up {
-  animation: slide-up 0.5s ease-out;
-}
+.animate-fade-in { animation: fade-in 0.5s ease-out; }
+.animate-slide-up { animation: slide-up 0.5s ease-out; }
+.animate-slide-glow { animation: slide-glow 3s ease-in-out infinite; }
 
 .gradient-text {
   background: linear-gradient(135deg, #ef4444, #f97316);
@@ -216,128 +186,344 @@ html {
   background-clip: text;
 }
 
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Animated glow divider */
-@keyframes slide-glow {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(400%);
-  }
-}
-
-.animate-slide-glow {
-  animation: slide-glow 3s ease-in-out infinite;
-}
-
-/* Light theme specific card shadow */
-:root.light .card-shadow {
-  box-shadow: 0 1px 3px var(--shadow), 0 1px 2px var(--shadow);
-}
-
-:root.light .card-shadow-lg {
-  box-shadow: 0 4px 6px -1px var(--shadow), 0 2px 4px -1px var(--shadow);
-}
-
-/* Override hardcoded zinc colors for light theme */
+/* ============================================
+   LIGHT THEME - BACKGROUND OVERRIDES
+   ============================================ */
+:root.light .bg-zinc-950,
 :root.light .bg-zinc-900,
-:root.light .bg-zinc-950 {
-  background-color: var(--card) !important;
+:root.light .bg-zinc-900\/50,
+:root.light .bg-zinc-900\/80 {
+  background-color: var(--bg-card) !important;
 }
 
-:root.light .bg-zinc-800 {
-  background-color: var(--background-tertiary) !important;
+:root.light .bg-zinc-800,
+:root.light .bg-zinc-800\/50,
+:root.light .bg-zinc-800\/80 {
+  background-color: var(--bg-tertiary) !important;
 }
 
+:root.light .bg-zinc-700,
+:root.light .bg-zinc-700\/30 {
+  background-color: #e2e8f0 !important;
+}
+
+:root.light .bg-black\/70,
+:root.light .bg-black\/80,
+:root.light .bg-black\/50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ============================================
+   LIGHT THEME - TEXT OVERRIDES
+   ============================================ */
 :root.light .text-white {
-  color: var(--foreground) !important;
+  color: var(--text-primary) !important;
 }
 
 :root.light .text-zinc-100,
 :root.light .text-zinc-200 {
-  color: var(--foreground) !important;
+  color: var(--text-primary) !important;
 }
 
-:root.light .text-zinc-300,
+:root.light .text-zinc-300 {
+  color: var(--text-secondary) !important;
+}
+
 :root.light .text-zinc-400 {
-  color: var(--foreground-secondary) !important;
+  color: var(--text-secondary) !important;
 }
 
 :root.light .text-zinc-500 {
-  color: var(--foreground-muted) !important;
+  color: var(--text-muted) !important;
 }
 
+:root.light .text-zinc-600 {
+  color: var(--text-muted) !important;
+}
+
+:root.light .text-zinc-700 {
+  color: var(--text-muted) !important;
+}
+
+:root.light .text-white\/60 {
+  color: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* ============================================
+   LIGHT THEME - BORDER OVERRIDES
+   ============================================ */
+:root.light .border-zinc-600,
 :root.light .border-zinc-700,
-:root.light .border-zinc-800 {
-  border-color: var(--border) !important;
+:root.light .border-zinc-800,
+:root.light .border-zinc-800\/50,
+:root.light .border-zinc-700\/50 {
+  border-color: var(--border-primary) !important;
 }
 
-:root.light .hover\:bg-zinc-800:hover {
-  background-color: var(--background-tertiary) !important;
+/* ============================================
+   LIGHT THEME - HOVER STATE OVERRIDES
+   ============================================ */
+:root.light .hover\:bg-zinc-800:hover,
+:root.light .hover\:bg-zinc-700:hover,
+:root.light .hover\:bg-zinc-750:hover {
+  background-color: var(--bg-tertiary) !important;
 }
 
 :root.light .hover\:text-white:hover {
-  color: var(--foreground) !important;
+  color: var(--text-primary) !important;
 }
 
-/* Fix movie/show card backgrounds in light mode */
-:root.light .bg-gradient-to-t {
-  background: linear-gradient(to top, var(--card), transparent) !important;
+:root.light .group-hover\:text-red-400 {
+  color: #dc2626 !important;
 }
 
-/* Fix input fields in light mode */
+/* ============================================
+   LIGHT THEME - GRADIENT OVERRIDES
+   ============================================ */
+:root.light .from-zinc-950,
+:root.light .from-zinc-900,
+:root.light .from-zinc-800 {
+  --tw-gradient-from: var(--bg-secondary) !important;
+}
+
+:root.light .to-zinc-950,
+:root.light .to-zinc-900,
+:root.light .to-zinc-800 {
+  --tw-gradient-to: var(--bg-card) !important;
+}
+
+:root.light .via-zinc-900,
+:root.light .via-zinc-900\/50,
+:root.light .via-zinc-900\/95,
+:root.light .via-zinc-800 {
+  --tw-gradient-via: var(--bg-tertiary) !important;
+}
+
+:root.light .bg-gradient-to-t.from-black {
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent) !important;
+}
+
+:root.light .bg-gradient-to-br {
+  background: var(--bg-card) !important;
+}
+
+/* Purple gradient for trivia */
+:root.light .from-purple-900\/50 {
+  --tw-gradient-from: rgba(147, 51, 234, 0.1) !important;
+}
+
+/* Red/orange gradient for newsletter */
+:root.light .from-red-600\/20 {
+  --tw-gradient-from: rgba(220, 38, 38, 0.08) !important;
+}
+
+:root.light .to-orange-600\/20 {
+  --tw-gradient-to: rgba(234, 88, 12, 0.08) !important;
+}
+
+:root.light .to-red-900\/20 {
+  --tw-gradient-to: rgba(127, 29, 29, 0.08) !important;
+}
+
+/* ============================================
+   LIGHT THEME - INPUT OVERRIDES
+   ============================================ */
 :root.light input,
 :root.light textarea,
 :root.light select {
-  background-color: var(--input-bg);
-  border-color: var(--input-border);
-  color: var(--foreground);
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
 }
 
 :root.light input::placeholder,
 :root.light textarea::placeholder {
-  color: var(--foreground-muted);
+  color: var(--text-muted) !important;
 }
 
-/* Fix buttons in light mode */
-:root.light .bg-zinc-800\/80,
-:root.light .bg-zinc-900\/80 {
-  background-color: rgba(241, 245, 249, 0.9) !important;
+:root.light .placeholder-zinc-500::placeholder {
+  color: var(--text-muted) !important;
 }
 
-/* Newsletter and engagement cards */
-:root.light .bg-gradient-to-br {
-  background: var(--card) !important;
+/* ============================================
+   LIGHT THEME - CARD SHADOWS
+   ============================================ */
+:root.light .rounded-xl,
+:root.light .rounded-lg {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-/* Fix footer */
+/* ============================================
+   LIGHT THEME - SPECIAL COMPONENT FIXES
+   ============================================ */
+
+/* Rating badge - keep dark for contrast */
+:root.light .bg-black\/70.backdrop-blur-sm {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+:root.light .bg-black\/70 .text-white {
+  color: #ffffff !important;
+}
+
+/* Social cards - specific gradients */
+:root.light [class*="from-sky-"],
+:root.light [class*="from-blue-"],
+:root.light [class*="from-pink-"],
+:root.light [class*="from-purple-"],
+:root.light [class*="from-rose-"] {
+  opacity: 0.9;
+}
+
+/* Poll options */
+:root.light .bg-zinc-800.border-red-500,
+:root.light .bg-zinc-800\/50.border-zinc-700 {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Progress bars */
+:root.light .bg-zinc-700\/30 {
+  background-color: rgba(203, 213, 225, 0.4) !important;
+}
+
+/* Scroll buttons */
+:root.light .bg-zinc-800.text-white,
+:root.light .bg-zinc-900.text-zinc-600 {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Fix VS badge in battle card */
+:root.light .bg-zinc-900.text-white.rounded-full {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary);
+}
+
+/* Fix category badges on news */
+:root.light .bg-red-600 .text-white,
+:root.light .bg-red-500 .text-white {
+  color: #ffffff !important;
+}
+
+/* Keep Play button white text */
+:root.light .bg-red-600\/90 .text-white {
+  color: #ffffff !important;
+}
+
+/* Newsletter preference buttons */
+:root.light .border-red-500.bg-red-500\/10 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Footer specific */
 :root.light footer {
-  background-color: var(--background-secondary);
-  border-color: var(--border);
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
 }
 
-/* Max width container constraint */
-.container {
-  max-width: 1400px !important;
+/* ============================================
+   LIGHT THEME - SOCIAL FOLLOW CARD FIX
+   ============================================ */
+:root.light .from-zinc-900\/80,
+:root.light .via-zinc-900\/60,
+:root.light .to-zinc-800\/40 {
+  --tw-gradient-from: rgba(248, 250, 252, 0.95) !important;
+  --tw-gradient-via: rgba(241, 245, 249, 0.9) !important;
+  --tw-gradient-to: rgba(226, 232, 240, 0.8) !important;
+}
+
+:root.light .via-zinc-600 {
+  --tw-gradient-via: #cbd5e1 !important;
+}
+
+/* ============================================
+   LIGHT THEME - COMING SOON COUNTDOWN
+   ============================================ */
+:root.light .bg-red-600.text-white,
+:root.light .bg-zinc-800.text-white {
+  color: #ffffff !important;
+}
+
+:root.light .from-zinc-900\/90 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Keep countdown numbers visible */
+:root.light [class*="countdown"] .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* ============================================
+   LIGHT THEME - BUTTON OVERRIDES
+   ============================================ */
+:root.light .bg-zinc-800\/50.text-zinc-300 {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+}
+
+:root.light .bg-zinc-800.hover\:bg-zinc-700 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+:root.light .bg-zinc-800.hover\:bg-zinc-700:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* ============================================
+   LIGHT THEME - SKELETON LOADING
+   ============================================ */
+:root.light .animate-pulse .bg-zinc-800,
+:root.light .animate-pulse .bg-zinc-700 {
+  background-color: #e2e8f0 !important;
+}
+
+/* ============================================
+   LIGHT THEME - PURPLE TRIVIA SPECIFIC
+   ============================================ */
+:root.light .bg-purple-500\/20 {
+  background-color: rgba(147, 51, 234, 0.1) !important;
+}
+
+:root.light .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+:root.light .border-purple-500\/20 {
+  border-color: rgba(147, 51, 234, 0.2) !important;
+}
+
+/* ============================================
+   LIGHT THEME - ENSURE RED BUTTONS STAY RED
+   ============================================ */
+:root.light .bg-red-600,
+:root.light .bg-red-500 {
+  background-color: #dc2626 !important;
+}
+
+:root.light .bg-red-600 *,
+:root.light .bg-red-500 * {
+  color: #ffffff !important;
+}
+
+:root.light .bg-gradient-to-r.from-red-600.to-red-500 {
+  background: linear-gradient(to right, #dc2626, #ef4444) !important;
+}
+
+:root.light .bg-gradient-to-r.from-red-600.to-red-500 * {
+  color: #ffffff !important;
+}
+
+/* Purple gradient button */
+:root.light .bg-gradient-to-r.from-purple-600.to-pink-600 {
+  background: linear-gradient(to right, #9333ea, #db2777) !important;
+}
+
+:root.light .bg-gradient-to-r.from-purple-600.to-pink-600 * {
+  color: #ffffff !important;
 }
