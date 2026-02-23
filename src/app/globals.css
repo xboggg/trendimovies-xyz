@@ -128,3 +128,8 @@ html {
 .animate-slide-glow {
   animation: slide-glow 3s ease-in-out infinite;
 }
+
+/* Container max-width to match trendimovies.com */
+.container {
+  max-width: 1280px;
+}
