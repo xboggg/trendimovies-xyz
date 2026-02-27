@@ -97,41 +97,110 @@ async function rewriteWithAI(title: string, description: string): Promise<{ titl
   const groqKey = process.env.GROQ_API_KEY;
   if (!groqKey) return { title, content: `<p>${description}</p>` };
 
-  const systemPrompt = `You are a professional entertainment news writer. Rewrite the news into 4-6 paragraphs. Format as HTML with <p> tags. Return ONLY valid JSON: {"title": "headline", "content": "<p>...</p>"}`;
-  const userPrompt = `Rewrite: ${title}\n\n${description}`;
+  const systemPrompt = `You are a senior entertainment journalist at TrendiMovies.xyz with 20 years of experience. Write compelling, original articles that feel authentically human-written.
 
-  try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${groqKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
-    });
+CRITICAL REQUIREMENTS:
+1. Write a COMPLETELY NEW headline - catchy, SEO-friendly, different from the original
+2. Write 800-1200 words (8-12 substantial paragraphs)
+3. Each paragraph must be wrapped in <p></p> tags
+4. Write in an engaging, conversational yet professional tone
+5. NEVER copy the original text - completely rewrite everything
+6. Add context, background, and your own analysis
+7. Include relevant industry knowledge and historical context
+8. Make it feel like a real journalist wrote this, not AI
 
-    if (!response.ok) return { title, content: `<p>${description}</p>` };
+ARTICLE STRUCTURE:
+- Opening hook: Start with an engaging statement that draws readers in
+- Main news: What happened and why it matters
+- Background: Context about the people/projects involved
+- Industry perspective: How this fits into larger entertainment trends
+- Fan/audience angle: What this means for viewers and fans
+- Expert insight: Add your professional analysis
+- Related context: Connect to other relevant news or history
+- Future implications: What to expect next
+- Closing: Strong conclusion that leaves an impression
 
-    const data = await response.json();
-    const aiContent = data.choices?.[0]?.message?.content || "";
-    const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0].replace(/[\x00-\x1F\x7F]/g, ''));
-      if (parsed.title && parsed.content) {
-        return { title: parsed.title, content: parsed.content };
+WRITING STYLE:
+- Use varied sentence lengths
+- Include specific details and names
+- Add personality and voice
+- Avoid generic phrases like "In conclusion" or "It remains to be seen"
+- Write like you're telling a story to a friend who loves movies
+
+OUTPUT: Return ONLY valid JSON with no extra text:
+{"title": "Your new catchy headline here", "content": "<p>First paragraph...</p><p>Second paragraph...</p>..."}`;
+
+  const userPrompt = `Transform this news into a comprehensive 800-1200 word article:
+
+ORIGINAL HEADLINE: ${title}
+
+ORIGINAL SUMMARY: ${description}
+
+Remember: Write 8-12 full paragraphs, each in <p> tags. Make it original, engaging, and human-like. Return only JSON.`;
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      if (attempt > 1) {
+        await new Promise(resolve => setTimeout(resolve, 5000));
       }
+
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${groqKey}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: 0.8,
+          max_tokens: 4000,
+        }),
+      });
+
+      if (!response.ok) continue;
+
+      const data = await response.json();
+      const aiContent = data.choices?.[0]?.message?.content || "";
+
+      // Try to extract JSON
+      const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          const cleanedJson = jsonMatch[0]
+            .replace(/[\x00-\x1F\x7F]/g, (char: string) => {
+              if (char === '\n') return '\\n';
+              if (char === '\r') return '';
+              if (char === '\t') return ' ';
+              return '';
+            });
+          const parsed = JSON.parse(cleanedJson);
+
+          // Verify content is substantial (at least 800 characters for ~150 words minimum)
+          if (parsed.title && parsed.content && parsed.content.length > 2000) {
+            return { title: parsed.title, content: parsed.content };
+          }
+        } catch {
+          // Try manual extraction
+          const titleMatch = aiContent.match(/"title"\s*:\s*"([^"]+)"/);
+          const allParagraphs = aiContent.match(/<p>[\s\S]*?<\/p>/g);
+
+          if (titleMatch && allParagraphs && allParagraphs.length >= 6) {
+            const combinedContent = allParagraphs.join('\n');
+            if (combinedContent.length > 2000) {
+              return { title: titleMatch[1], content: combinedContent };
+            }
+          }
+        }
+      }
+    } catch {
+      // Continue to next attempt
     }
-  } catch {
-    // Fall through to default
   }
+
   return { title, content: `<p>${description}</p>` };
 }
 
