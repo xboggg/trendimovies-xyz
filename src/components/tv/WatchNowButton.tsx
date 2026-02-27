@@ -4,13 +4,21 @@ import { Tv, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface WatchNowButtonProps {
-  tmdbId: number;
   showName: string;
+  year: string;
 }
 
-export function WatchNowButton({ tmdbId, showName }: WatchNowButtonProps) {
-  // Link directly to search on trendimovies.com - most reliable
-  const href = `https://trendimovies.com/search?q=${encodeURIComponent(showName)}`;
+export function WatchNowButton({ showName, year }: WatchNowButtonProps) {
+  // Generate slug: lowercase, remove special chars, replace spaces with hyphens, add year
+  const slug = showName
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+
+  // Link directly to series page on trendimovies.com
+  const href = `https://trendimovies.com/series/${slug}-${year}`;
 
   return (
     <a
