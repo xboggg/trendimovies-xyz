@@ -88,7 +88,7 @@ async function getLatestNews() {
       .select("id, title, slug, excerpt, image_url, category, published_at")
       .eq("status", "published")
       .order("published_at", { ascending: false })
-      .limit(4);
+      .limit(6);
     return data || [];
   } catch {
     return [];
