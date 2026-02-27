@@ -9,7 +9,7 @@ interface WatchNowButtonProps {
 
 export function WatchNowButton({ tmdbId }: WatchNowButtonProps) {
   // Link directly to movie page on trendimovies.com using TMDB ID
-  const href = `https://trendimovies.com/movies/${tmdbId}`;
+  const href = `https://trendimovies.com/movie/${tmdbId}`;
 
   return (
     <a
