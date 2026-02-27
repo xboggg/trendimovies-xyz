@@ -26,6 +26,7 @@ import { PersonCard, TVCard } from "@/components/ui/card";
 import { Section, ScrollRow } from "@/components/ui/section";
 import { VideoPlayer } from "@/components/movies/VideoPlayer";
 import { WatchProviders } from "@/components/movies/WatchProviders";
+import { WatchNowButton } from "@/components/tv";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -213,16 +214,7 @@ export default async function TVDetailPage({ params }: Props) {
             {/* Actions */}
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
-              <a
-                href={`https://trendimovies.com/series/${id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button size="lg" className="gap-2 bg-red-600 hover:bg-red-700">
-                  <Tv className="w-5 h-5" />
-                  Watch Now
-                </Button>
-              </a>
+              <WatchNowButton tmdbId={parseInt(id)} showName={show.name} />
               {trailer && (
                 <VideoPlayer videoKey={trailer.key} title={show.name}>
                   <Button size="lg" variant="secondary" className="gap-2">

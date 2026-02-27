@@ -27,6 +27,7 @@ import { PersonCard, MovieCard } from "@/components/ui/card";
 import { Section, ScrollRow } from "@/components/ui/section";
 import { VideoPlayer } from "@/components/movies/VideoPlayer";
 import { WatchProviders } from "@/components/movies/WatchProviders";
+import { WatchNowButton as MovieWatchNowButton } from "@/components/movies/WatchNowButton";
 import { Comments, UserRating, WatchlistButton, Newsletter } from "@/components/engagement";
 import { MovieJsonLd, BreadcrumbJsonLd } from "@/components/seo";
 import { InArticleAd } from "@/components/ads";
@@ -223,16 +224,7 @@ export default async function MovieDetailPage({ params }: Props) {
             {/* Actions */}
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
-              <a
-                href={`https://trendimovies.com/movie/${id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button size="lg" className="gap-2 bg-red-600 hover:bg-red-700">
-                  <Tv className="w-5 h-5" />
-                  Watch Now
-                </Button>
-              </a>
+              <MovieWatchNowButton tmdbId={parseInt(id)} movieTitle={movie.title} />
               {trailer && (
                 <VideoPlayer videoKey={trailer.key} title={movie.title}>
                   <Button size="lg" variant="secondary" className="gap-2">
