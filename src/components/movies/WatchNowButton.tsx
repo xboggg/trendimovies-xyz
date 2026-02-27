@@ -4,21 +4,12 @@ import { Tv, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface WatchNowButtonProps {
-  movieTitle: string;
-  year: string;
+  tmdbId: number;
 }
 
-export function WatchNowButton({ movieTitle, year }: WatchNowButtonProps) {
-  // Generate slug: lowercase, remove special chars, replace spaces with hyphens, add year
-  const slug = movieTitle
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-
-  // Link directly to movie page on trendimovies.com
-  const href = `https://trendimovies.com/movie/${slug}-${year}`;
+export function WatchNowButton({ tmdbId }: WatchNowButtonProps) {
+  // Link directly to movie page on trendimovies.com using TMDB ID
+  const href = `https://trendimovies.com/movies/${tmdbId}`;
 
   return (
     <a

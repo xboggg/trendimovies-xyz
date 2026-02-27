@@ -224,7 +224,7 @@ export default async function MovieDetailPage({ params }: Props) {
             {/* Actions */}
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
-              <MovieWatchNowButton movieTitle={movie.title} year={formatYear(movie.release_date)} />
+              <MovieWatchNowButton tmdbId={parseInt(id)} />
               {trailer && (
                 <VideoPlayer videoKey={trailer.key} title={movie.title}>
                   <Button size="lg" variant="secondary" className="gap-2">

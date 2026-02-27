@@ -214,7 +214,7 @@ export default async function TVDetailPage({ params }: Props) {
             {/* Actions */}
             <div className="flex flex-wrap gap-4">
               {/* Watch Now - Link to trendimovies.com */}
-              <WatchNowButton showName={show.name} year={formatYear(show.first_air_date)} />
+              <WatchNowButton tmdbId={parseInt(id)} />
               {trailer && (
                 <VideoPlayer videoKey={trailer.key} title={show.name}>
                   <Button size="lg" variant="secondary" className="gap-2">
