@@ -266,7 +266,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
   if (articles.length === 0) return null;
 
   const featured = articles.slice(0, 4);
-  const rest = articles.slice(1, 4);
+  const rest = articles.slice(1, 5);
 
   return (
     <section className="mb-12">
