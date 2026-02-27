@@ -116,7 +116,7 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
   if (articles.length === 0) return null;
 
   return (
-    <div className="relative h-[320px]">
+    <div className="relative h-[420px]">
       <div className="absolute -right-2 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -165,7 +165,7 @@ function VerticalNewsStack({ articles }: { articles: NewsArticle[] }) {
               >
                 <Link href={"/news/" + article.slug} className="block h-full">
                   <div className={"h-full rounded-2xl overflow-hidden border transition-all " + (offset === 0 ? "border-red-500/30 shadow-xl shadow-red-500/10" : "border-zinc-800/50")}>
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-56 overflow-hidden">
                       {article.image_url ? (
                         <Image src={article.image_url} alt={article.title} fill className="object-cover" sizes="400px" />
                       ) : (
